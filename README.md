@@ -1,7 +1,7 @@
 # Mandelbrot Set Generator (COBOL)
 
 A retro-style implementation of the **Mandelbrot Set** fractal generator written in COBOL. This program calculates the complex mathematical set and outputs the result as a high-quality **PPM (Portable PixMap)** image file.
-This program was origianly run on a PC running a AMD Athlon II X2 250 and took **7.5 hours** to generate a 5k x 5k image.
+This program was origianlly run on a PC running a AMD Athlon II X2 250 and took **7.5 hours** to generate a 5k x 5k image.
 As of 2026-09-24 the current time to complete on the same machine is: **58 Minutes**
 
 
@@ -15,7 +15,7 @@ The program maps a grid of pixels to the complex plane, iterates the fractal for
 - **Smooth Coloring**: Uses logarithmic math to produce a smooth color transition.
 - **PPM Output**: Generates a `.ppm` file, which can be opened by most standard image viewers (e.g., GIMP, IrfanView, or converted to PNG/JPG).
 - **Classic Architecture**: Traditional COBOL structure including `IDENTIFICATION`, `ENVIRONMENT`, `DATA`, and `PROCEDURE` divisions.
-- **Navigation**: the variables `CX`, `CY` and `ZOOM` allow you to navigate and zoome through the fractal.
+- **Navigation**: the variables `CX`, `CY` and `ZOOM` allow you to navigate and zoom through the fractal.
 
 
 ## Installation & Requirements
@@ -33,7 +33,7 @@ To run this program, you will need a COBOL compiler. The recommended compiler is
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/RoySpino/Cobol-Mandelbrot-PPM-Imager.git
-   cd mset-cobol
+   cd Cobol-Mandelbrot-PPM-Imager
    ```
 
 2. **Compile the program:**
