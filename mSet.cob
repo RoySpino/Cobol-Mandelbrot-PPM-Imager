@@ -10,8 +10,7 @@
        DATA DIVISION.
        FILE SECTION.
        FD  PPMOUT.
-       01  PPM_RECORD         PIC X(25).
-
+       01  PPM_RECORD         PIC X(15).
 
        WORKING-STORAGE SECTION.
         01 CONT                 PIC 9(10) VALUE 0.
@@ -26,15 +25,13 @@
            05 PPMH              PIC z(5).
            05 PPMW              PIC z(5).
 
-        01 KVARR.
-           05 KVAL              PIC S99V9(10) OCCURS 500 TIMES.
-        01 PIXA.
-           05 PIX_ARR           PIC 9(9) OCCURS 500 TIMES.
-        01 PIX_CLR.
-           05 PR                PIC 999.
-           05 PG                PIC 999.
-           05 PB                PIC 999.
-        01 PPM_PIXEL.
+        01 PXA.
+           05 PIXEL_ARR         PIC 9(9) OCCURS 500 TIMES.
+        01 PIXEL.
+           05 PXR               PIC 999.
+           05 PXG               PIC 999.
+           05 PXB               PIC 999.
+        01 PPMPX.
            05 PPMR              PIC 999.
            05 S1                PIC X.
            05 PPMG              PIC 999.
@@ -93,10 +90,9 @@
       *     MOVE -1.76961 TO CX.
            SUBTRACT 1 FROM KT GIVING KTLOG
            MOVE FUNCTION LOG(KTLOG) TO KTLOG
-
-      * clear out the array
+           
            PERFORM VARYING X FROM 1 BY 1 UNTIL X = 500
-               MOVE -1 TO PIX_ARR(X)
+               MOVE 999888777 TO PIXEL_ARR(X)
            END-PERFORM.
            
            DIVIDE KT BY 3 GIVING THRDA.
@@ -129,13 +125,13 @@
 
            MOVE FUNCTION ABS(DX) TO DX.
            MOVE FUNCTION ABS(DY) TO DY.
-           SET prctL TO -1.
-           SET prct TO 0.
+           MOVE -1 TO PRCTL.
+           MOVE ZERO TO PRCT.
 
            ADD 1 TO HEI.
            ADD 1 TO WID.
 
-           PERFORM VARYING X FROM 1 BY 1 UNTIL X = HEI
+           PERFORM VARYING X FROM 1 BY 1 UNTIL X = WID
                COMPUTE JX = XMIN + X * DX
 
       *      display precent compleate         
@@ -143,21 +139,22 @@
                IF PRCT IS NOT EQUAL TO prctL THEN
                    MOVE PRCT TO PRCTO
                    DISPLAY "%" prctO
-                   SET PRCTL TO prct
+                   MOVE PRCT TO PRCTL
                END-IF
 
-               PERFORM VARYING Y FROM 1 BY 1 UNTIL Y = WID
+               PERFORM VARYING Y FROM 1 BY 1 UNTIL Y = HEI
                    COMPUTE JY = YMIN + Y * DY
-                   SET K TO ZERO
-                   SET WX TO ZERO
-                   SET WY TO ZERO
-                   SET R TO ZERO
+                   MOVE ZERO TO K
+                   MOVE ZERO TO WX
+                   MOVE ZERO TO WY
+                   MOVE ZERO TO R
 
       *          check fractal point
                    PERFORM CHECK-LOOP UNTIL K >= KT OR R >= M
 
-      *         draw pixel to image
                    PERFORM GET-PIXEL
+      *             PERFORM GET-BLUE
+
                    PERFORM SET-PIXEL
                END-PERFORM
            END-PERFORM.
@@ -173,26 +170,25 @@
            COMPUTE R = WX + WX + WY * WY.
 
        GET-PIXEL.
-      *   unable to exit set to black 
            IF K >= KT THEN
                MOVE ZERO TO RR
                MOVE ZERO TO GG
                MOVE ZERO TO BB
            END-IF.
 
-      *   check if C value has been computed already
-           IF PIX_ARR(K) > -1 THEN
-               MOVE PIX_ARR(K) TO PIX_CLR
-               MOVE PR TO RR
-               MOVE PG TO GG
-               MOVE PB TO BB
+      *   check if color has been computed already
+           IF PIXEL_ARR(K) < 999888777 THEN
+               MOVE PIXEL_ARR(K) TO PIXEL
+               MOVE PXR TO RR
+               MOVE PXG TO GG
+               MOVE PXB TO BB
            ELSE
                MOVE FUNCTION LOG(K) TO KLOG
 
       *      compute log color value
                DIVIDE KLOG BY KTLOG GIVING C
                
-      *      set pixel color
+      *  set pixel color
                IF C < 1 THEN
                    COMPUTE RR = k * 8 * c
                    COMPUTE GG = k * 8 * c
@@ -211,46 +207,70 @@
                    END-IF
                END-IF
 
-      *     save the color to the color array         
+      *  Save pixel color to pixel color array
                PERFORM NORMALIZE
-               MOVE RR TO PR
-               MOVE GG TO PG
-               MOVE BB TO PB
-               MOVE PIX_CLR TO PIX_ARR(K)
+               MOVE RR TO PXR
+               MOVE GG TO PXG
+               MOVE BB TO PXB
+               MOVE PIXEL TO PIXEL_ARR(K)
            END-IF.
 
        GET-BLUE.
-      *  set pixel color
            IF K >= KT THEN
-               SET RR TO ZERO
-               SET GG TO ZERO
-               SET BB TO ZERO
+               MOVE ZERO TO RR
+               MOVE ZERO TO GG
+               MOVE ZERO TO BB
+           END-IF.
+
+      *   check if C value has been computed already
+           IF PIXEL_ARR(K) < 999888777 THEN
+               MOVE PIXEL_ARR(K) TO PIXEL
+               MOVE PXR TO RR
+               MOVE PXG TO GG
+               MOVE PXB TO BB
            ELSE
-               IF K < THRDA THEN
-                   COMPUTE RR = K * 8
-                   COMPUTE GG = K * 8
-                   COMPUTE BB = 128 + K * 4
+               MOVE FUNCTION LOG(K) TO KLOG
+
+      *      compute log color value
+               DIVIDE KLOG BY KTLOG GIVING C
+               
+      *  set pixel color
+               IF C < 1 THEN
+                   MOVE ZERO TO RR
+                   MOVE ZERO TO GG
+                   MULTIPLY C BY 255 GIVING BB
                ELSE
-                   IF K >= THRDA AND K < THRDB THEN
-                       COMPUTE RR = 128 + K - thrda
-                       COMPUTE GG = 128 + K - thrda
-                       COMPUTE BB = 192 + K - thrda
+                   IF C < 2 THEN
+                       SUBTRACT 1 FROM C
+                       MOVE ZERO TO RR
+                       MULTIPLY 255 BY C GIVING GG
+                       MOVE 255 TO BB
                    ELSE
-                       COMPUTE RR = KT - K
-                       COMPUTE GG = 128 + (KT - K) * 0.5
-                       COMPUTE BB = kt - k
+                       SUBTRACT 2 FROM C
+                       MULTIPLY 255 BY C GIVING RR
+                       MOVE 255 TO GG
+                       MOVE 255 TO BB
                    END-IF
                END-IF
+
+      *  Save pixel color to pixel color array
+               PERFORM NORMALIZE
+               MOVE RR TO PXR
+               MOVE GG TO PXG
+               MOVE BB TO PXB
+               MOVE PIXEL TO PIXEL_ARR(K)
            END-IF.
+
+       GET-BLUE.
        
        GET-RED.
            DIVIDE K BY KT GIVING C.
 
       *  set pixel color
            IF K >= KT THEN
-               SET RR TO ZERO
-               SET GG TO ZERO
-               SET BB TO ZERO
+               MOVE ZERO TO RR
+               MOVE ZERO TO GG
+               MOVE ZERO TO BB
            ELSE
                IF C < 0.33 THEN
                    COMPUTE RR = c * 255
@@ -268,6 +288,7 @@
                    END-IF
                END-IF
            END-IF.
+           PERFORM NORMALIZE.
            
        NORMALIZE.
       *    correct pixel value to 0-255 range
@@ -293,14 +314,14 @@
            END-IF.
        
        SET-PIXEL.
-      *   write pixel to ppm image file
-           MOVE SPACES TO PPM_PIXEL.
+           MOVE SPACES TO PPMPX.
            MOVE RR TO PPMR.
            MOVE GG TO PPMG.
            MOVE BB TO PPMB.
-           MOVE PPM_PIXEL TO PPM_RECORD.
-           WRITE PPM_RECORD.
 
+      *  write pixel to file
+           MOVE PPMPX TO PPM_RECORD.
+      *     WRITE PPM_RECORD.
 
        OPEN-FILE.
            OPEN OUTPUT PPMOUT.
