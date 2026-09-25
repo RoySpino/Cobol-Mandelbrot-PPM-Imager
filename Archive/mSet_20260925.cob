@@ -14,16 +14,16 @@
 
        WORKING-STORAGE SECTION.
         01 CONT                 PIC 9(10) VALUE 0.
-        77 DATALIEN             PIC A(15).
-        77 WID                  USAGE BINARY-LONG.
-        77 HEI                  USAGE BINARY-LONG.
+        77 DATALIEN             PIC A(25).
+        77 WID                  PIC 9(5).
+        77 HEI                  PIC 9(5).
+        77 PIXL                 PIC 9(10).
         77 COV5                 PIC z(5).
         77 COV20                PIC X(20).
         77 COV5A                PIC x(5).
         01 DIM.
-           05 PPMH              PIC Z(5).
-           05 S3                PIC X.
-           05 PPMW              PIC Z(5).
+           05 PPMH              PIC z(5).
+           05 PPMW              PIC z(5).
 
         01 PXA.
            05 PIXEL_ARR         PIC 9(9) OCCURS 500 TIMES.
@@ -38,47 +38,54 @@
            05 S2                PIC X.
            05 PPMB              PIC 999.
 
-        77 cx                   USAGE COMP-2 VALUE -0.75.
-        77 cy                   USAGE COMP-2 VALUE ZERO.
-        77 dx                   USAGE COMP-2.
-        77 dy                   USAGE COMP-2.
-        77 wx                   USAGE COMP-2.
-        77 wy                   USAGE COMP-2.
-        77 tx                   USAGE COMP-2.
-        77 ty                   USAGE COMP-2.
-        77 jx                   USAGE COMP-2.
-        77 jy                   USAGE COMP-2.
-        77 thrdA                USAGE COMP-2.
-        77 thrdB                USAGE COMP-2.
-        77 ktlog                USAGE COMP-2.
-        77 klog                 USAGE COMP-2.
-        77 prctL                USAGE COMP-2.
-        77 prct                 USAGE BINARY-LONG.
+        77 cx                   PIC S9(5)V9(10).
+        77 cy                   PIC S9(5)V9(10).
+        77 dx                   PIC S9(5)V9(10).
+        77 dy                   PIC S9(5)V9(10).
+        77 wx                   PIC S9(5)V9(10).
+        77 wy                   PIC S9(5)V9(10).
+        77 tx                   PIC S9(5)V9(10).
+        77 ty                   PIC S9(5)V9(10).
+        77 jx                   PIC S9(5)V9(10).
+        77 jy                   PIC S9(5)V9(10).
+        77 thrdA                PIC S9(5)V9(10).
+        77 thrdB                PIC S9(5)V9(10).
+        77 ktlog                PIC S9(5)V9(10).
+        77 klog                 PIC S9(5)V9(10).
+        77 prctL                PIC S9(5)V9(10).
+        77 prct                 PIC S9(5).
         77 prctO                PIC Z(5).
-        77 K                    USAGE BINARY-LONG.
-        77 KT                   USAGE BINARY-LONG VALUE 320.
-        77 X                    USAGE BINARY-LONG.
-        77 Y                    USAGE BINARY-LONG.
-        77 M                    USAGE BINARY-LONG VALUE 4.
-        77 xmin                 USAGE COMP-2.
-        77 xmax                 USAGE COMP-2.
-        77 ymin                 USAGE COMP-2.
-        77 ymax                 USAGE COMP-2.
-        77 ZOOM                 USAGE COMP-2 VALUE 1.35.
-        77 C                    USAGE COMP-2.
-        77 rr                   USAGE BINARY-LONG.
-        77 R                    USAGE BINARY-LONG.
-        77 gg                   USAGE BINARY-LONG.
-        77 G                    USAGE BINARY-LONG.
-        77 bb                   USAGE BINARY-LONG.
-        77 B                    USAGE BINARY-LONG.
+        77 K                    PIC S9(5).
+        77 KT                   PIC S9(5).
+        77 X                    PIC S9(10).
+        77 Y                    PIC S9(10).
+        77 M                    PIC S9.
+        77 klim                 PIC 9999.
+        77 xmin                 PIC S9v9(10).
+        77 xmax                 PIC S9v9(10).
+        77 ymin                 PIC S9v9(10).
+        77 ymax                 PIC S9v9(10).
+        77 zoom                 PIC S99V9(10).
+        77 C                    PIC S99V9(10).
+        77 rr                   PIC S9999.
+        77 R                    PIC S999.
+        77 gg                   PIC S9999.
+        77 G                    PIC S999.
+        77 bb                   PIC S9999.
+        77 B                    PIC S999.
 
        PROCEDURE DIVISION.
        PROGRAM-CONTROL.
            MOVE 5000 TO HEI.
            MOVE HEI TO WID.
+           MULTIPLY HEI BY WID GIVING PIXL.
 
-      *     MOVE 0.000001 TO ZOOM.  pixl
+           MOVE 320 TO KT.
+           MOVE 4 TO M.
+           MOVE ZERO TO CY.
+           MOVE -.75 TO CX.
+           MOVE 1.35 TO ZOOM
+      *     MOVE 0.000001 TO ZOOM.
       *     MOVE 0.00358696 TO CY.
       *     MOVE -1.76961 TO CX.
            SUBTRACT 1 FROM KT GIVING KTLOG
@@ -285,47 +292,61 @@
            
        NORMALIZE.
       *    correct pixel value to 0-255 range
-           If RR < 0 MOVE ZERO TO RR
-           ELSE IF RR > 255 MOVE 255 TO RR
+           If RR < 0 THEN
+               MOVE ZERO TO RR
+           END-IF.
+           IF RR > 255 THEN
+               MOVE 255 TO RR
            END-IF.
 
-           If GG < 0 MOVE ZERO TO GG
-           ELSE IF GG > 255 MOVE 255 TO GG
+           If GG < 0 THEN
+               MOVE ZERO TO GG
+           END-IF.
+           IF GG > 255 THEN
+               MOVE 255 TO GG
            END-IF.
 
-           If BB < 0 MOVE ZERO TO BB
-           ELSE IF BB > 255 MOVE 255 TO BB
+           If BB < 0 THEN
+               MOVE ZERO TO BB
+           END-IF.
+           IF BB > 255 THEN
+               MOVE 255 TO BB
            END-IF.
        
        SET-PIXEL.
-      * write RGB values to record
            MOVE SPACES TO PPMPX.
            MOVE RR TO PPMR.
            MOVE GG TO PPMG.
            MOVE BB TO PPMB.
-           
-      *  write pixel record to file
+
+      *  write pixel to file
            MOVE PPMPX TO PPM_RECORD.
-           WRITE PPM_RECORD.
+      *     WRITE PPM_RECORD.
 
        OPEN-FILE.
            OPEN OUTPUT PPMOUT.
 
        CLOSE-FILE.
+      *     CLOSE OUTPUT PPMOUT.
            CLOSE PPMOUT.
            
        SET-HEADER.
-      * write ppm type
-           MOVE "P3" TO PPM_RECORD.
-           WRITE PPM_RECORD.
+           MOVE "P3" TO DATALIEN.
+           PERFORM WRITE_IMAGE.
 
-      * wite PPM image dimentions
-           MOVE SPACES TO DIM.
-           MOVE HEI TO PPMH.
-           MOVE WID TO PPMW.
-           MOVE DIM TO PPM_RECORD.
-           WRITE PPM_RECORD.
+           MOVE HEI TO COV5A.
+           MOVE COV5A TO PPMH.
 
-      * write maximum color value
-           MOVE "255" TO PPM_RECORD.
+           MOVE WID TO COV5A.
+           MOVE COV5A TO PPMW.
+
+           MOVE DIM TO COV20.
+           MOVE COV20 TO DATALIEN.
+           PERFORM WRITE_IMAGE.
+           
+           MOVE "255" TO DATALIEN.
+           PERFORM WRITE_IMAGE.
+
+       WRITE_IMAGE.
+           MOVE DATALIEN TO PPM_RECORD.
            WRITE PPM_RECORD.
