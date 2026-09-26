@@ -1,3 +1,5 @@
+      * this is the float and int version of the program
+      *  
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PPM-IMG.
        ENVIRONMENT DIVISION.
@@ -15,8 +17,8 @@
        WORKING-STORAGE SECTION.
         01 CONT                 PIC 9(10) VALUE 0.
         77 DATALIEN             PIC A(15).
-        77 WID                  PIC 9999.
-        77 HEI                  PIC 9999.
+        77 WID                  PIC S9(5) COMP-5.
+        77 HEI                  PIC S9(5) COMP-5.
         77 COV5                 PIC z(5).
         77 COV20                PIC X(20).
         77 COV5A                PIC x(5).
@@ -38,38 +40,38 @@
            05 S2                PIC X.
            05 PPMB              PIC 999.
 
-        77 cx                   PIC S9(3)V9(7) VALUE -0.75.
-        77 cy                   PIC S9(3)V9(7) VALUE ZERO.
-        77 dx                   PIC S9(3)V9(7).
-        77 dy                   PIC S9(3)V9(7).
-        77 wx                   PIC S9(3)V9(7).
-        77 wy                   PIC S9(3)V9(7).
-        77 tx                   PIC S9(3)V9(7).
-        77 ty                   PIC S9(3)V9(7).
-        77 jx                   PIC S9(3)V9(7).
-        77 jy                   PIC S9(3)V9(7).
-        77 thrdA                PIC S9(3)V9(7).
-        77 thrdB                PIC S9(3)V9(7).
-        77 ktlog                PIC S9(3)V9(7).
-        77 klog                 PIC S9(3)V9(7).
-        77 prctL                PIC S9(3)V9(7).
-        77 prct                 PIC 99999.
+        77 cx                   USAGE COMP-2 VALUE -0.75.
+        77 cy                   USAGE COMP-2 VALUE ZERO.
+        77 dx                   FLOAT-LONG.
+        77 dy                   FLOAT-LONG.
+        77 wx                   FLOAT-LONG.
+        77 wy                   FLOAT-LONG.
+        77 tx                   FLOAT-LONG.
+        77 ty                   FLOAT-LONG.
+        77 jx                   FLOAT-LONG.
+        77 jy                   FLOAT-LONG.
+        77 thrdA                FLOAT-LONG.
+        77 thrdB                FLOAT-LONG.
+        77 ktlog                FLOAT-LONG.
+        77 klog                 FLOAT-LONG.
+        77 prctL                FLOAT-LONG.
+        77 prct                 PIC S9(5) COMP-5.
         77 prctO                PIC Z(5).
-        77 K                    PIC 99999.
-        77 KT                   PIC 99999 VALUE 320.
-        77 X                    PIC 99999.
-        77 Y                    PIC 99999.
-        77 M                    PIC 99999 VALUE 4.
-        77 xmin                 PIC S9(3)V9(7).
-        77 xmax                 PIC S9(3)V9(7).
-        77 ymin                 PIC S9(3)V9(7).
-        77 ymax                 PIC S9(3)V9(7).
-        77 ZOOM                 PIC S9(3)V9(7) VALUE 1.35.
-        77 C                    PIC S99V9(7).
-        77 R                    PIC 99v999.
-        77 rr                   PIC 999.
-        77 gg                   PIC 999.
-        77 bb                   PIC 999.
+        77 K                    PIC S9(5) COMP-5.
+        77 KT                   PIC S9(5) COMP-5 VALUE 320.
+        77 X                    PIC S9(5) COMP-5.
+        77 Y                    PIC S9(5) COMP-5.
+        77 M                    PIC S9(5) COMP-5 VALUE 4.
+        77 xmin                 FLOAT-LONG.
+        77 xmax                 FLOAT-LONG.
+        77 ymin                 FLOAT-LONG.
+        77 ymax                 FLOAT-LONG.
+        77 ZOOM                 USAGE COMP-2 VALUE 1.35.
+        77 C                    FLOAT-LONG.
+        77 R                    FLOAT-LONG.
+        77 rr                   PIC S9(5) COMP-5.
+        77 gg                   PIC S9(5) COMP-5.
+        77 bb                   PIC S9(5) COMP-5.
 
        PROCEDURE DIVISION.
        PROGRAM-CONTROL.
