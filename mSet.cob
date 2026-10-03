@@ -1,5 +1,5 @@
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. PPM-IMG.
+       PROGRAM-ID. MBT-PPM.
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
@@ -38,33 +38,33 @@
            05 S2                PIC X.
            05 PPMB              PIC 999.
 
-        77 cx                   PIC S9(3)V9(7) VALUE -0.75.
-        77 cy                   PIC S9(3)V9(7) VALUE ZERO.
-        77 dx                   PIC S9(3)V9(7).
-        77 dy                   PIC S9(3)V9(7).
-        77 wx                   PIC S9(3)V9(7).
-        77 wy                   PIC S9(3)V9(7).
-        77 tx                   PIC S9(3)V9(7).
-        77 ty                   PIC S9(3)V9(7).
-        77 jx                   PIC S9(3)V9(7).
-        77 jy                   PIC S9(3)V9(7).
-        77 thrdA                PIC S9(3)V9(7).
-        77 thrdB                PIC S9(3)V9(7).
-        77 ktlog                PIC S9(3)V9(7).
-        77 klog                 PIC S9(3)V9(7).
-        77 prctL                PIC S9(3)V9(7).
+        77 cx                   PIC S99V9(7) VALUE -0.75.
+        77 cy                   PIC S99V9(7) VALUE ZERO.
+        77 dx                   PIC S99V9(7).
+        77 dy                   PIC S99V9(7).
+        77 wx                   PIC S99V9(7).
+        77 wy                   PIC S99V9(7).
+        77 tx                   PIC S99V9(7).
+        77 ty                   PIC S99V9(7).
+        77 jx                   PIC S99V9(7).
+        77 jy                   PIC S99V9(7).
+        77 thrdA                PIC S99V9(7).
+        77 thrdB                PIC S99V9(7).
+        77 ktlog                PIC S99V9(7).
+        77 klog                 PIC S99V9(7).
+        77 prctL                PIC S99V9(7).
         77 prct                 PIC 99999.
         77 prctO                PIC Z(5).
         77 K                    PIC 99999.
         77 KT                   PIC 99999 VALUE 320.
         77 X                    PIC 99999.
         77 Y                    PIC 99999.
-        77 M                    PIC 99999 VALUE 4.
-        77 xmin                 PIC S9(3)V9(7).
-        77 xmax                 PIC S9(3)V9(7).
-        77 ymin                 PIC S9(3)V9(7).
-        77 ymax                 PIC S9(3)V9(7).
-        77 ZOOM                 PIC S9(3)V9(7) VALUE 1.35.
+        77 M                    PIC 9V99 VALUE 4.
+        77 xmin                 PIC S99V9(7).
+        77 xmax                 PIC S99V9(7).
+        77 ymin                 PIC S99V9(7).
+        77 ymax                 PIC S99V9(7).
+        77 ZOOM                 PIC S99V9(7) VALUE 1.35.
         77 C                    PIC S99V9(7).
         77 R                    PIC 99v999.
         77 rr                   PIC 999.
@@ -165,119 +165,45 @@
                MOVE ZERO TO RR
                MOVE ZERO TO GG
                MOVE ZERO TO BB
-           END-IF.
+           ELSE
 
       *   check if color has been computed already
-           IF PIXEL_ARR(K) < 999888777 THEN
-               MOVE PIXEL_ARR(K) TO PIXEL
-               MOVE PXR TO RR
-               MOVE PXG TO GG
-               MOVE PXB TO BB
-           ELSE
+               IF PIXEL_ARR(K) < 999888777 THEN
+                   MOVE PIXEL_ARR(K) TO PIXEL
+                   MOVE PXR TO RR
+                   MOVE PXG TO GG
+                   MOVE PXB TO BB
+               ELSE
       *      compute log color value
-               COMPUTE C = FUNCTION LOG(K) / KTLOG
+                   COMPUTE C = FUNCTION LOG(K) / KTLOG
                
       *  set pixel color
-               IF C < 1 THEN
-                   COMPUTE RR = k * 8 * c
-                   COMPUTE GG = k * 8 * c
-                   COMPUTE BB = (128 + k * 4) * c
-               ELSE
-                   IF C < 2 THEN
-                       SUBTRACT 1 FROM C
-                       COMPUTE RR = (128 + k - 16) * c
-                       COMPUTE GG = (128 + k - 16) * c
-                       COMPUTE BB = (192 + k - 16) * c
+                   IF C < 1 THEN
+                       COMPUTE RR = k * 8 * c
+                       COMPUTE GG = k * 8 * c
+                       COMPUTE BB = (128 + k * 4) * c
                    ELSE
-                       SUBTRACT 2 FROM C
-                       COMPUTE RR = (kt - k) * c
-                       COMPUTE GG = (128+(kt - k) / 2) * c
-                       COMPUTE BB = kt - k
+                       IF C < 2 THEN
+                           SUBTRACT 1 FROM C
+                           COMPUTE RR = (128 + k - 16) * c
+                           COMPUTE GG = (128 + k - 16) * c
+                           COMPUTE BB = (192 + k - 16) * c
+                       ELSE
+                           SUBTRACT 2 FROM C
+                           COMPUTE RR = (kt - k) * c
+                           COMPUTE GG = (128+(kt - k) / 2) * c
+                           COMPUTE BB = kt - k
+                       END-IF
                    END-IF
-               END-IF
 
       *  Save pixel color to pixel color array
-               PERFORM NORMALIZE
-               MOVE RR TO PXR
-               MOVE GG TO PXG
-               MOVE BB TO PXB
-               MOVE PIXEL TO PIXEL_ARR(K)
+                    PERFORM NORMALIZE
+                    MOVE RR TO PXR
+                    MOVE GG TO PXG
+                    MOVE BB TO PXB
+                    MOVE PIXEL TO PIXEL_ARR(K)
+                END-IF
            END-IF.
-
-       GET-BLUE.
-           IF K >= KT THEN
-               MOVE ZERO TO RR
-               MOVE ZERO TO GG
-               MOVE ZERO TO BB
-           END-IF.
-
-      *   check if C value has been computed already
-           IF PIXEL_ARR(K) < 999888777 THEN
-               MOVE PIXEL_ARR(K) TO PIXEL
-               MOVE PXR TO RR
-               MOVE PXG TO GG
-               MOVE PXB TO BB
-           ELSE
-               MOVE FUNCTION LOG(K) TO KLOG
-
-      *      compute log color value
-               DIVIDE KLOG BY KTLOG GIVING C
-               
-      *  set pixel color
-               IF C < 1 THEN
-                   MOVE ZERO TO RR
-                   MOVE ZERO TO GG
-                   MULTIPLY C BY 255 GIVING BB
-               ELSE
-                   IF C < 2 THEN
-                       SUBTRACT 1 FROM C
-                       MOVE ZERO TO RR
-                       MULTIPLY 255 BY C GIVING GG
-                       MOVE 255 TO BB
-                   ELSE
-                       SUBTRACT 2 FROM C
-                       MULTIPLY 255 BY C GIVING RR
-                       MOVE 255 TO GG
-                       MOVE 255 TO BB
-                   END-IF
-               END-IF
-
-      *  Save pixel color to pixel color array
-               PERFORM NORMALIZE
-               MOVE RR TO PXR
-               MOVE GG TO PXG
-               MOVE BB TO PXB
-               MOVE PIXEL TO PIXEL_ARR(K)
-           END-IF.
-
-       GET-BLUE.
-       
-       GET-RED.
-           DIVIDE K BY KT GIVING C.
-
-      *  set pixel color
-           IF K >= KT THEN
-               MOVE ZERO TO RR
-               MOVE ZERO TO GG
-               MOVE ZERO TO BB
-           ELSE
-               IF C < 0.33 THEN
-                   COMPUTE RR = c * 255
-                   COMPUTE GG = 0
-                   COMPUTE BB = 0
-               ELSE
-                   IF C >= .33 AND C < .66 THEN
-                       COMPUTE RR = 255
-                       COMPUTE GG = C * 255
-                       COMPUTE BB = 0
-                   ELSE
-                       COMPUTE RR = 255
-                       COMPUTE GG = 255
-                       COMPUTE BB = C * 255
-                   END-IF
-               END-IF
-           END-IF.
-           PERFORM NORMALIZE.
            
        NORMALIZE.
       *    correct pixel value to 0-255 range
