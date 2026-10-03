@@ -161,12 +161,11 @@
            COMPUTE R = WX + WX + WY * WY.
 
        GET-PIXEL.
-           IF K >= KT THEN
+           IF K > KT THEN
                MOVE ZERO TO RR
                MOVE ZERO TO GG
                MOVE ZERO TO BB
            ELSE
-
       *   check if color has been computed already
                IF PIXEL_ARR(K) < 999888777 THEN
                    MOVE PIXEL_ARR(K) TO PIXEL
