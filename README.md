@@ -1,6 +1,6 @@
 # Mandelbrot Set Generator (COBOL)
 
-A retro-style implementation of the **Mandelbrot Set** fractal generator written in COBOL. This program calculates the complex mathematical set and outputs the result as a high-quality **PPM (Portable PixMap)** image file.
+A retro-style implementation of the **Mandelbrot Set** fractal generator written in COBOL. This program calculates the complex mathematical set and outputs the result as a separate high-quality **PPM3 (Portable PixMap)** image file.
 This program was origianlly run on a PC running a AMD Athlon II X2 250 and took **7.5 hours** to generate a 5k x 5k image.
 As of 2026-09-24 the current time to complete on the same machine is: **58 Minutes**
 
@@ -8,7 +8,7 @@ As of 2026-09-24 the current time to complete on the same machine is: **58 Minut
 ## Overview
 While COBOL is traditionally associated with business logic and banking, this project demonstrates the language's capability in performing complex mathematical iterations and generating visual data. 
 
-The program maps a grid of pixels to the complex plane, iterates the fractal formula $z_{n+1} = z_n^2 + c$, and applies a logarithmic "smooth coloring" algorithm to create a smooth gradient of colors rather than flat bands.
+The program maps a grid of pixels to the complex plane, iterates the fractal formula $z_{n+1} = z_n^2 + c$, and applies a logarithmic "smooth coloring" algorithm to create a smooth gradient of colors rather than flat bands. because this program takes time iterating over a 5k image, progress is displayed on the screen as % complete.
 
 ## Features
 - **Fractal Calculation**: Accurate iteration of the Mandelbrot set.
