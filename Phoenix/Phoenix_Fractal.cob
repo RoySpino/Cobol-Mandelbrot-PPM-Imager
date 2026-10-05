@@ -106,7 +106,7 @@
            COMPUTE DY = (YMAX - YMIN) / (HEI - 1).
            
        PHOENIX-CORE.
-           PERFORM VARYING XX FROM 1 BY 1 UNTIL XX = HEI
+           PERFORM VARYING XX FROM 1 BY 1 UNTIL XX > HEI
                COMPUTE PRCT = (XX / (HEI * 1.0)) * 100.0
                IF PRCT <> LPRCT THEN
                    MOVE PRCT TO LPRCT
@@ -114,7 +114,7 @@
                    DISPLAY "%" DSPPT
                END-IF
                
-               PERFORM VARYING YY FROM 1 BY 1 UNTIL YY = WID
+               PERFORM VARYING YY FROM 1 BY 1 UNTIL YY > WID
                    COMPUTE ZY = XMIN + (YY - 1) * DX
                    COMPUTE ZX = YMIN + (XX - 1) * DY
                    MOVE ZERO TO PX
