@@ -13,8 +13,6 @@
        01  PPM_RECORD         PIC X(15).
 
        WORKING-STORAGE SECTION.
-        01 CONT                 PIC 9(10) VALUE 0.
-        77 DATALIEN             PIC A(15).
         77 WID                  PIC 9999.
         77 HEI                  PIC 9999.
         01 DIM.
@@ -106,11 +104,11 @@
        MANDL-CORE.
       *     SUBTRACT XMIN FROM XMAX GIVING DX.
       *     DIVIDE DX BY HEI GIVING DX.
-           compute dx = (xmax - xmin) / hei.
+           COMPUTE DX = (XMAX - XMIN) / WID.
 
       *     SUBTRACT YMIN FROM YMAX GIVING DY.
       *     DIVIDE DY BY WID GIVING DY.
-           compute dy = (ymax - ymin) / wid.
+           COMPUTE DY = (YMAX - YMIN) / HEI.
 
            MOVE FUNCTION ABS(DX) TO DX.
            MOVE FUNCTION ABS(DY) TO DY.
