@@ -61,7 +61,7 @@
         77 ZOOM                 PIC S9V9.
         77 PRCT                 PIC 999.
         77 II                   PIC 999.
-        77 LPRCT                PIC 999 VALUE -1.
+        77 LPRCT                PIC S999 VALUE -1.
         77 DSPPT                PIC ZZZZ.
         
         77 XX                   PIC 99999.
@@ -151,9 +151,7 @@
            
        GET-PIXEL.
            IF II >= KT THEN
-               MOVE ZERO TO RR
-               MOVE ZERO TO GG
-               MOVE ZERO TO BB
+               MOVE ZERO TO RR GG BB
            ELSE
 
       * when value at array is good get that color 
@@ -223,7 +221,7 @@
            WRITE PPM_RECORD.
            
            MOVE "255" TO PPM_RECORD.
-           WRITE PPM_RECORD
+           WRITE PPM_RECORD.
 
       * //////////////////////////////////////////////////////
        SET-PIXEL.

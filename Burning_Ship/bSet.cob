@@ -1,10 +1,10 @@
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. MBT-PPM.
+       PROGRAM-ID. PPM-BSHIP.
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
            SELECT PPMOUT
-               ASSIGN TO "mout.ppm"
+               ASSIGN TO "bout.ppm"
                ORGANIZATION IS LINE SEQUENTIAL.
 
        DATA DIVISION.
@@ -17,9 +17,6 @@
         77 DATALIEN             PIC A(15).
         77 WID                  PIC 9999.
         77 HEI                  PIC 9999.
-        77 COV5                 PIC z(5).
-        77 COV20                PIC X(20).
-        77 COV5A                PIC x(5).
         01 DIM.
            05 PPMH              PIC Z(5).
            05 S3                PIC X.
@@ -38,7 +35,7 @@
            05 S2                PIC X.
            05 PPMB              PIC 999.
 
-        77 cx                   PIC S99V9(7) VALUE -0.75.
+        77 cx                   PIC S99V9(7) VALUE -0.5.
         77 cy                   PIC S99V9(7) VALUE ZERO.
         77 dx                   PIC S99V9(7).
         77 dy                   PIC S99V9(7).
@@ -59,33 +56,34 @@
         77 KT                   PIC 99999 VALUE 320.
         77 X                    PIC 99999.
         77 Y                    PIC 99999.
-        77 M                    PIC 9V99 VALUE 4.
+        77 M                    PIC 9v99 VALUE 4.0.
         77 xmin                 PIC S99V9(7).
         77 xmax                 PIC S99V9(7).
         77 ymin                 PIC S99V9(7).
         77 ymax                 PIC S99V9(7).
-        77 ZOOM                 PIC S99V9(7) VALUE 1.35.
+        77 ZOOM                 PIC S99V9(7).
         77 C                    PIC S99V9(7).
         77 R                    PIC 99v999.
-        77 rr                   PIC 999.
-        77 gg                   PIC 999.
-        77 bb                   PIC 999.
+        77 RR                   PIC 999.
+        77 GG                   PIC 999.
+        77 BB                   PIC 999.
 
        PROCEDURE DIVISION.
        PROGRAM-CONTROL.
-           MOVE 5000 TO HEI.
+           MOVE 500 TO HEI.
            MOVE HEI TO WID.
 
+           MOVE 1.7 TO ZOOM.
       *     MOVE 0.000001 TO ZOOM.  pixl
       *     MOVE 0.00358696 TO CY.
       *     MOVE -1.76961 TO CX.
            SUBTRACT 1 FROM KT GIVING KTLOG
            MOVE FUNCTION LOG(KTLOG) TO KTLOG
-           
+
            PERFORM VARYING X FROM 1 BY 1 UNTIL X = 500
                MOVE 999888777 TO PIXEL_ARR(X)
            END-PERFORM.
-           
+
            DIVIDE KT BY 3 GIVING THRDA.
            ADD THRDA TO THRDA GIVING THRDB.
 
@@ -125,8 +123,8 @@
            PERFORM VARYING Y FROM 1 BY 1 UNTIL Y = HEI
                COMPUTE JY = YMIN + Y * DY
 
-      *      display precent compleate         
-               COMPUTE PRCT = (Y / (HEI * 1.0)) * 100
+      *      display precent compleate
+               COMPUTE PRCT = (Y / HEI) * 100
                IF PRCT IS NOT EQUAL TO prctL THEN
                    MOVE PRCT TO PRCTO
                    DISPLAY "%" prctO
@@ -152,58 +150,64 @@
 
        CHECK-LOOP.
            COMPUTE TX = WX * WX - WY * WY + JX
-           COMPUTE TY = 2 * WX * WY + JY
+           COMPUTE TY = 2 * WX * WY
+
+           IF TY IS LESS THAN ZERO THEN
+               MULTIPLY -1 BY TY GIVING TY
+           END-IF
+
+           ADD JY TO TY
            MOVE TX TO WX
            MOVE TY TO WY
 
       *  compute loop limits
            ADD 1 TO K.
-           COMPUTE R = WX + WX + WY * WY.
+           COMPUTE R = WX * WX + WY * WY.
 
        GET-PIXEL.
-           IF K > KT THEN
-               MOVE ZERO TO RR
-               MOVE ZERO TO GG
-               MOVE ZERO TO BB
+           IF K >= KT THEN
+               MOVE ZERO TO RR GG BB
+      *         MOVE ZERO TO GG
+      *         MOVE ZERO TO BB
            ELSE
       *   check if color has been computed already
-               IF PIXEL_ARR(K) < 999888777 THEN
-                   MOVE PIXEL_ARR(K) TO PIXEL
-                   MOVE PXR TO RR
-                   MOVE PXG TO GG
-                   MOVE PXB TO BB
-               ELSE
+             IF PIXEL_ARR(K) < 999888777 THEN
+                 MOVE PIXEL_ARR(K) TO PIXEL
+                 MOVE PXR TO RR
+                 MOVE PXG TO GG
+                 MOVE PXB TO BB
+             ELSE
       *      compute log color value
-                   COMPUTE C = FUNCTION LOG(K) / KTLOG
-               
+                 COMPUTE C = FUNCTION LOG(K) / KTLOG
+
       *  set pixel color
-                   IF C < 1 THEN
-                       COMPUTE RR = k * 8 * c
-                       COMPUTE GG = k * 8 * c
-                       COMPUTE BB = (128 + k * 4) * c
-                   ELSE
-                       IF C < 2 THEN
-                           SUBTRACT 1 FROM C
-                           COMPUTE RR = (128 + k - 16) * c
-                           COMPUTE GG = (128 + k - 16) * c
-                           COMPUTE BB = (192 + k - 16) * c
-                       ELSE
-                           SUBTRACT 2 FROM C
-                           COMPUTE RR = (kt - k) * c
-                           COMPUTE GG = (128+(kt - k) / 2) * c
-                           COMPUTE BB = kt - k
-                       END-IF
-                   END-IF
+                 IF C < 1 THEN
+                     COMPUTE RR = k * 8 * c
+                     COMPUTE GG = k * 8 * c
+                     COMPUTE BB = (128 + k * 4) * c
+                 ELSE
+                     IF C < 2 THEN
+                         SUBTRACT 1 FROM C
+                         COMPUTE RR = (128 + k - 16) * c
+                         COMPUTE GG = (128 + k - 16) * c
+                         COMPUTE BB = (192 + k - 16) * c
+                     ELSE
+                         SUBTRACT 2 FROM C
+                         COMPUTE RR = (kt - k) * c
+                         COMPUTE GG = (128+(kt - k) / 2) * c
+                         COMPUTE BB = kt - k
+                     END-IF
+                 END-IF
 
       *  Save pixel color to pixel color array
-                    PERFORM NORMALIZE
-                    MOVE RR TO PXR
-                    MOVE GG TO PXG
-                    MOVE BB TO PXB
-                    MOVE PIXEL TO PIXEL_ARR(K)
-                END-IF
+                 PERFORM NORMALIZE
+                 MOVE RR TO PXR
+                 MOVE GG TO PXG
+                 MOVE BB TO PXB
+                 MOVE PIXEL TO PIXEL_ARR(K)
+             END-IF
            END-IF.
-           
+
        NORMALIZE.
       *    correct pixel value to 0-255 range
            If RR < 0 MOVE ZERO TO RR
@@ -217,14 +221,14 @@
            If BB < 0 MOVE ZERO TO BB
            ELSE IF BB > 255 MOVE 255 TO BB
            END-IF.
-       
+
        SET-PIXEL.
       * write RGB values to record
            MOVE SPACES TO PPMPX.
            MOVE RR TO PPMR.
            MOVE GG TO PPMG.
            MOVE BB TO PPMB.
-           
+
       *  write pixel record to file
            MOVE PPMPX TO PPM_RECORD.
            WRITE PPM_RECORD.
@@ -234,7 +238,7 @@
 
        CLOSE-FILE.
            CLOSE PPMOUT.
-           
+
        SET-HEADER.
       * write ppm type
            MOVE "P3" TO PPM_RECORD.
