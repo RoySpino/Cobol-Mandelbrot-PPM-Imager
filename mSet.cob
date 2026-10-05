@@ -13,13 +13,8 @@
        01  PPM_RECORD         PIC X(15).
 
        WORKING-STORAGE SECTION.
-        01 CONT                 PIC 9(10) VALUE 0.
-        77 DATALIEN             PIC A(15).
         77 WID                  PIC 9999.
         77 HEI                  PIC 9999.
-        77 COV5                 PIC z(5).
-        77 COV20                PIC X(20).
-        77 COV5A                PIC x(5).
         01 DIM.
            05 PPMH              PIC Z(5).
            05 S3                PIC X.
