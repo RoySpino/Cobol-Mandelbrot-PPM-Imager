@@ -38,36 +38,35 @@
            05 S2                PIC X.
            05 PPMB              PIC 999.
 
-        77 cx                   PIC S99V9(7) VALUE -0.75.
-        77 cy                   PIC S99V9(7) VALUE ZERO.
-        77 dx                   PIC S99V9(7).
-        77 dy                   PIC S99V9(7).
-        77 wx                   PIC S99V9(7).
-        77 wy                   PIC S99V9(7).
-        77 tx                   PIC S99V9(7).
-        77 ty                   PIC S99V9(7).
-        77 jx                   PIC S99V9(7).
-        77 jy                   PIC S99V9(7).
-        77 ktlog                PIC S99V9(7).
-        77 klog                 PIC S99V9(7).
-        77 prctL                PIC S99V9(7).
-        77 prct                 PIC 99999.
-        77 prctO                PIC Z(5).
+        77 CX                   PIC S99V9(7) VALUE -0.75.
+        77 CY                   PIC S99V9(7) VALUE ZERO.
+        77 DX                   PIC S99V9(7).
+        77 DY                   PIC S99V9(7).
+        77 WX                   PIC S99V9(7).
+        77 WY                   PIC S99V9(7).
+        77 TX                   PIC S99V9(7).
+        77 TY                   PIC S99V9(7).
+        77 JX                   PIC S99V9(7).
+        77 JY                   PIC S99V9(7).
+        77 KTLOG                PIC S99V9(7).
+        77 PRCTL                PIC S99V9(7).
+        77 PRCT                 PIC 99999.
+        77 PRCTO                PIC Z(5).
         77 K                    PIC 99999.
         77 KT                   PIC 99999 VALUE 320.
         77 X                    PIC 99999.
         77 Y                    PIC 99999.
         77 M                    PIC 9V99 VALUE 4.
-        77 xmin                 PIC S99V9(7).
-        77 xmax                 PIC S99V9(7).
-        77 ymin                 PIC S99V9(7).
-        77 ymax                 PIC S99V9(7).
+        77 XMAX                 PIC S99V9(7).
+        77 XMIN                 PIC S99V9(7).
+        77 YMIN                 PIC S99V9(7).
+        77 YMAX                 PIC S99V9(7).
         77 ZOOM                 PIC S99V9(7) VALUE 1.35.
         77 C                    PIC S99V9(7).
         77 R                    PIC 99v999.
-        77 rr                   PIC 999.
-        77 gg                   PIC 999.
-        77 bb                   PIC 999.
+        77 RR                   PIC 999.
+        77 GG                   PIC 999.
+        77 BB                   PIC 999.
 
        PROCEDURE DIVISION.
        PROGRAM-CONTROL.
@@ -103,11 +102,11 @@
        MANDL-CORE.
       *     SUBTRACT XMIN FROM XMAX GIVING DX.
       *     DIVIDE DX BY HEI GIVING DX.
-           compute dx = (xmax - xmin) / hei.
+           COMPUTE DX = (XMAX - XMIN) / HEI.
 
       *     SUBTRACT YMIN FROM YMAX GIVING DY.
       *     DIVIDE DY BY WID GIVING DY.
-           compute dy = (ymax - ymin) / wid.
+           COMPUTE DY = (YMAX - YMIN) / WID.
 
            MOVE FUNCTION ABS(DX) TO DX.
            MOVE FUNCTION ABS(DY) TO DY.
@@ -122,7 +121,7 @@
 
       *      display precent compleate         
                COMPUTE PRCT = (Y / (HEI * 1.0)) * 100
-               IF PRCT IS NOT EQUAL TO prctL THEN
+               IF PRCT IS NOT EQUAL TO PRCTL THEN
                    MOVE PRCT TO PRCTO
                    DISPLAY "%" prctO
                    MOVE PRCT TO PRCTL
@@ -136,7 +135,7 @@
                    MOVE ZERO TO R
 
       *          check fractal point
-                   PERFORM CHECK-LOOP UNTIL K >= KT OR R >= M
+                   PERFORM CHECK-LOOP UNTIL K >= KT OR R > M
 
                    PERFORM GET-PIXEL
       *             PERFORM GET-BLUE
