@@ -48,8 +48,6 @@
         77 ty                   PIC S99V9(7).
         77 jx                   PIC S99V9(7).
         77 jy                   PIC S99V9(7).
-        77 thrdA                PIC S99V9(7).
-        77 thrdB                PIC S99V9(7).
         77 ktlog                PIC S99V9(7).
         77 klog                 PIC S99V9(7).
         77 prctL                PIC S99V9(7).
@@ -85,9 +83,6 @@
            PERFORM VARYING X FROM 1 BY 1 UNTIL X = 500
                MOVE 999888777 TO PIXEL_ARR(X)
            END-PERFORM.
-           
-           DIVIDE KT BY 3 GIVING THRDA.
-           ADD THRDA TO THRDA GIVING THRDB.
 
            PERFORM GET-CENTER.
 
@@ -161,7 +156,7 @@
            COMPUTE R = WX + WX + WY * WY.
 
        GET-PIXEL.
-           IF K > KT THEN
+           IF K >= KT THEN
                MOVE ZERO TO RR
                MOVE ZERO TO GG
                MOVE ZERO TO BB
