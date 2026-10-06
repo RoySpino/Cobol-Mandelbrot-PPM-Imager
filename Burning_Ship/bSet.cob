@@ -207,16 +207,16 @@
 
        NORMALIZE.
       *    correct pixel value to 0-255 range
-           If RR < 0 MOVE ZERO TO RR
-           ELSE IF RR > 255 MOVE 255 TO RR
+           If RR < 0 MOVE THEN ZERO TO RR
+           ELSE IF RR > 255 THEN MOVE 255 TO RR
            END-IF.
 
-           If GG < 0 MOVE ZERO TO GG
-           ELSE IF GG > 255 MOVE 255 TO GG
+           If GG < 0 MOVE THEN ZERO TO GG
+           ELSE IF GG > 255 THEN MOVE 255 TO GG
            END-IF.
 
-           If BB < 0 MOVE ZERO TO BB
-           ELSE IF BB > 255 MOVE 255 TO BB
+           If BB < 0 MOVE THEN ZERO TO BB
+           ELSE IF BB > 255 THEN MOVE 255 TO BB
            END-IF.
 
        SET-PIXEL.
