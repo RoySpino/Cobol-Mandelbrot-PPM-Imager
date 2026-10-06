@@ -35,19 +35,18 @@
 
         77 cx                   PIC S99V9(7) VALUE -0.5.
         77 cy                   PIC S99V9(7) VALUE ZERO.
-        77 dx                   PIC S99V9(7).
-        77 dy                   PIC S99V9(7).
-        77 wx                   PIC S99V9(7).
-        77 wy                   PIC S99V9(7).
-        77 tx                   PIC S99V9(7).
-        77 ty                   PIC S99V9(7).
-        77 jx                   PIC S99V9(7).
-        77 jy                   PIC S99V9(7).
-        77 thrdA                PIC S99V9(7).
-        77 thrdB                PIC S99V9(7).
-        77 ktlog                PIC S99V9(7).
-        77 klog                 PIC S99V9(7).
-        77 prctL                PIC S99V9(7).
+        77 dx                   PIC S9(4)V9(7).
+        77 dy                   PIC S9(4)V9(7).
+        77 wx                   PIC S9(4)V9(7).
+        77 wy                   PIC S9(4)V9(7).
+        77 tx                   PIC S9(4)V9(7).
+        77 ty                   PIC S9(4)V9(7).
+        77 jx                   PIC S9(4)V9(7).
+        77 jy                   PIC S9(4)V9(7).
+        77 thrdA                PIC S9(4)V9(7).
+        77 thrdB                PIC S9(4)V9(7).
+        77 ktlog                PIC S9(4)V9(7).
+        77 prctL                PIC S9(4)V9(7).
         77 prct                 PIC 99999.
         77 prctO                PIC Z(5).
         77 K                    PIC 99999.
@@ -55,16 +54,16 @@
         77 X                    PIC 99999.
         77 Y                    PIC 99999.
         77 M                    PIC 9v99 VALUE 4.0.
-        77 xmin                 PIC S99V9(7).
-        77 xmax                 PIC S99V9(7).
-        77 ymin                 PIC S99V9(7).
-        77 ymax                 PIC S99V9(7).
-        77 ZOOM                 PIC S99V9(7).
-        77 C                    PIC S99V9(7).
+        77 xmin                 PIC S9(4)V9(7).
+        77 xmax                 PIC S9(4)V9(7).
+        77 ymin                 PIC S9(4)V9(7).
+        77 ymax                 PIC S9(4)V9(7).
+        77 ZOOM                 PIC S9(4)V9(7).
+        77 C                    PIC S9(4)V9(7).
         77 R                    PIC 99v999.
-        77 RR                   PIC 999.
-        77 GG                   PIC 999.
-        77 BB                   PIC 999.
+        77 RR                   PIC 99999.
+        77 GG                   PIC 99999.
+        77 BB                   PIC 99999.
 
        PROCEDURE DIVISION.
        PROGRAM-CONTROL.
