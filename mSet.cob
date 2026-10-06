@@ -66,7 +66,7 @@
 
        PROCEDURE DIVISION.
        PROGRAM-CONTROL.
-           MOVE 500 TO HEI.
+           MOVE 5000 TO HEI.
            MOVE HEI TO WID.
 
       *     MOVE 0.000001 TO ZOOM.  pixl
