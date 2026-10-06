@@ -33,39 +33,40 @@
            05 S2                PIC X.
            05 PPMB              PIC 999.
 
-        77 CX                   PIC S99V9(7) VALUE -0.75.
-        77 CY                   PIC S99V9(7) VALUE ZERO.
-        77 DX                   PIC S99V9(7).
-        77 DY                   PIC S99V9(7).
-        77 WX                   PIC S99V9(7).
-        77 WY                   PIC S99V9(7).
-        77 TX                   PIC S99V9(7).
-        77 TY                   PIC S99V9(7).
-        77 JX                   PIC S99V9(7).
-        77 JY                   PIC S99V9(7).
-        77 KTLOG                PIC S99V9(7).
-        77 PRCTL                PIC S99V9(7).
+        77 CX                   PIC S9(4)V9(7) VALUE -0.75.
+        77 CY                   PIC S9(4)V9(7) VALUE ZERO.
+        77 DX                   PIC S9(4)V9(7).
+        77 DY                   PIC S9(4)V9(7).
+        77 WX                   PIC S9(4)V9(7).
+        77 WY                   PIC S9(4)V9(7).
+        77 TX                   PIC S9(4)V9(7).
+        77 TY                   PIC S9(4)V9(7).
+        77 JX                   PIC S9(4)V9(7).
+        77 JY                   PIC S9(4)V9(7).
+        77 KTLOG                PIC S9(4)V9(7).
+        77 KLOG                 PIC S9(4)V9(7).
+        77 PRCTL                PIC S9(4)V9(7).
         77 PRCT                 PIC 99999.
         77 PRCTO                PIC Z(5).
-        77 K                    PIC 99999.
-        77 KT                   PIC 99999 VALUE 320.
-        77 X                    PIC 99999.
-        77 Y                    PIC 99999.
+        77 K                    PIC 9999.
+        77 KT                   PIC 9999 VALUE 320.
+        77 X                    PIC 9999.
+        77 Y                    PIC 9999.
         77 M                    PIC 9V99 VALUE 4.
-        77 XMAX                 PIC S99V9(7).
-        77 XMIN                 PIC S99V9(7).
-        77 YMIN                 PIC S99V9(7).
-        77 YMAX                 PIC S99V9(7).
-        77 ZOOM                 PIC S99V9(7) VALUE 1.35.
-        77 C                    PIC S99V9(7).
-        77 R                    PIC 99v999.
-        77 RR                   PIC 999.
-        77 GG                   PIC 999.
-        77 BB                   PIC 999.
+        77 XMIN                 PIC S9(4)V9(7).
+        77 XMAX                 PIC S9(4)V9(7).
+        77 YMIN                 PIC S9(4)V9(7).
+        77 YMAX                 PIC S9(4)V9(7).
+        77 ZOOM                 PIC S9(4)V9(7) VALUE 1.35.
+        77 C                    PIC S9(4)V9(7).
+        77 R                    PIC S9(4)V9(7).
+        77 RR                   PIC S9(5).
+        77 GG                   PIC S9(5).
+        77 BB                   PIC S9(5).
 
        PROCEDURE DIVISION.
        PROGRAM-CONTROL.
-           MOVE 5000 TO HEI.
+           MOVE 500 TO HEI.
            MOVE HEI TO WID.
 
       *     MOVE 0.000001 TO ZOOM.  pixl
@@ -73,7 +74,7 @@
       *     MOVE -1.76961 TO CX.
            SUBTRACT 1 FROM KT GIVING KTLOG
            MOVE FUNCTION LOG(KTLOG) TO KTLOG
-           
+
            PERFORM VARYING X FROM 1 BY 1 UNTIL X = 500
                MOVE 999888777 TO PIXEL_ARR(X)
            END-PERFORM.
@@ -97,11 +98,11 @@
        MANDL-CORE.
       *     SUBTRACT XMIN FROM XMAX GIVING DX.
       *     DIVIDE DX BY HEI GIVING DX.
-           COMPUTE DX = (XMAX - XMIN) / HEI.
+           compute dx = (xmax - xmin) / hei.
 
       *     SUBTRACT YMIN FROM YMAX GIVING DY.
       *     DIVIDE DY BY WID GIVING DY.
-           COMPUTE DY = (YMAX - YMIN) / WID.
+           compute dy = (ymax - ymin) / wid.
 
            MOVE FUNCTION ABS(DX) TO DX.
            MOVE FUNCTION ABS(DY) TO DY.
@@ -114,9 +115,9 @@
            PERFORM VARYING Y FROM 1 BY 1 UNTIL Y = HEI
                COMPUTE JY = YMIN + Y * DY
 
-      *      display precent compleate         
+      *      display precent compleate
                COMPUTE PRCT = (Y / (HEI * 1.0)) * 100
-               IF PRCT IS NOT EQUAL TO PRCTL THEN
+               IF PRCT IS NOT EQUAL TO prctL THEN
                    MOVE PRCT TO PRCTO
                    DISPLAY "%" prctO
                    MOVE PRCT TO PRCTL
@@ -130,7 +131,7 @@
                    MOVE ZERO TO R
 
       *          check fractal point
-                   PERFORM CHECK-LOOP UNTIL K >= KT OR R > M
+                   PERFORM CHECK-LOOP UNTIL K >= KT OR R >= M
 
                    PERFORM GET-PIXEL
       *             PERFORM GET-BLUE
@@ -147,13 +148,11 @@
 
       *  compute loop limits
            ADD 1 TO K.
-           COMPUTE R = WX + WX + WY * WY.
+           COMPUTE R = WX * WX + WY + WY.
 
        GET-PIXEL.
            IF K >= KT THEN
-               MOVE ZERO TO RR
-               MOVE ZERO TO GG
-               MOVE ZERO TO BB
+               MOVE ZERO TO RR, GG, BB
            ELSE
       *   check if color has been computed already
                IF PIXEL_ARR(K) < 999888777 THEN
@@ -164,7 +163,7 @@
                ELSE
       *      compute log color value
                    COMPUTE C = FUNCTION LOG(K) / KTLOG
-               
+
       *  set pixel color
                    IF C < 1 THEN
                        COMPUTE RR = k * 8 * c
@@ -192,28 +191,25 @@
                     MOVE PIXEL TO PIXEL_ARR(K)
                 END-IF
            END-IF.
-           
+
        NORMALIZE.
       *    correct pixel value to 0-255 range
-           If RR < 0 MOVE ZERO TO RR
-           ELSE IF RR > 255 MOVE 255 TO RR
+           IF RR > 255 THEN MOVE 255 TO RR
            END-IF.
 
-           If GG < 0 MOVE ZERO TO GG
-           ELSE IF GG > 255 MOVE 255 TO GG
+           IF GG > 255 THEN MOVE 255 TO GG
            END-IF.
 
-           If BB < 0 MOVE ZERO TO BB
-           ELSE IF BB > 255 MOVE 255 TO BB
+           IF BB > 255 THEN MOVE 255 TO BB
            END-IF.
-       
+
        SET-PIXEL.
       * write RGB values to record
            MOVE SPACES TO PPMPX.
            MOVE RR TO PPMR.
            MOVE GG TO PPMG.
            MOVE BB TO PPMB.
-           
+
       *  write pixel record to file
            MOVE PPMPX TO PPM_RECORD.
            WRITE PPM_RECORD.
@@ -223,7 +219,7 @@
 
        CLOSE-FILE.
            CLOSE PPMOUT.
-           
+
        SET-HEADER.
       * write ppm type
            MOVE "P3" TO PPM_RECORD.
