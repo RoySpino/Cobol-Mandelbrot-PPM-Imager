@@ -69,12 +69,16 @@
            MOVE 5000 TO HEI.
            MOVE HEI TO WID.
 
-      *     MOVE 0.000001 TO ZOOM.  pixl
-      *     MOVE 0.00358696 TO CY.
-      *     MOVE -1.76961 TO CX.
+      * set fractal center and zoom
+           MOVE 1.35 TO ZOOM.
+           MOVE 0.00358696 TO CY.
+           MOVE -1.76961 TO CX.
+
+      * set base logarithm for color calculation
            SUBTRACT 1 FROM KT GIVING KTLOG
            MOVE FUNCTION LOG(KTLOG) TO KTLOG
 
+      * initialize pixel color array
            PERFORM VARYING X FROM 1 BY 1 UNTIL X = 500
                MOVE 999888777 TO PIXEL_ARR(X)
            END-PERFORM.

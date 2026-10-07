@@ -1,10 +1,11 @@
+
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PPM-IMG.
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
            SELECT PPMOUT
-               ASSIGN TO "Jout.ppm"
+               ASSIGN TO "jout.ppm"
                ORGANIZATION IS LINE SEQUENTIAL.
 
        DATA DIVISION.
@@ -58,8 +59,8 @@
         77 XMAX                 PIC S9V9(10).
         77 YMIN                 PIC S9V9(10).
         77 YMAX                 PIC S9V9(10).
-        77 ZOOM                 PIC S99V9(10).
-        77 C                    PIC S99V9(10).
+        77 ZOOM                 PIC S9(5)V9(10).
+        77 C                    PIC S9(5)V9(10).
         77 RR                   PIC S9999.
         77 R                    PIC S999.
         77 GG                   PIC S9999.
@@ -72,8 +73,6 @@
        PROGRAM-CONTROL.
            MOVE 5000 TO HEI.
            MOVE HEI TO WID.
-           SUBTRACT 1 FROM KT GIVING KTLOG.
-           MOVE FUNCTION LOG(KTLOG) TO KTLOG.
            
       * clear out the pixel array
            PERFORM VARYING X FROM 1 BY 1 UNTIL X = 500
@@ -85,6 +84,9 @@
            MOVE 1.2 TO ZOOM.
            MOVE 0.005 TO CY.
            MOVE -1.36798 TO CX.
+           
+           SUBTRACT 1 FROM KT GIVING KTLOG.
+           MOVE FUNCTION LOG(KTLOG) TO KTLOG.
            
            DIVIDE KT BY 3 GIVING THRDA.
            ADD THRDA TO THRDA GIVING THRDB.
@@ -115,17 +117,17 @@
            MULTIPLY HEI BY 0.5 GIVING HH.
            MULTIPLY ZOOM BY 0.5 GIVING HZ.
 
-           PERFORM VARYING X FROM 1 BY 1 UNTIL X = HEI
+           PERFORM VARYING Y FROM 1 BY 1 UNTIL Y = WID
            
       *      display precent compleate         
-               COMPUTE PRCT = (X / HEI) * 100
+               COMPUTE PRCT = (Y / HEI) * 100
                IF PRCT IS NOT EQUAL TO prctL THEN
                    MOVE prct TO prctO
                    DISPLAY "%" prcto
                    MOVE PRCT TO prctL
                END-IF
 
-               PERFORM VARYING Y FROM 1 BY 1 UNTIL Y = WID
+               PERFORM VARYING X FROM 1 BY 1 UNTIL X = HEI
                    COMPUTE ZX = 1.5 * (X - HW) / (HZ * WID)
                    COMPUTE ZY = 1.0 * (Y - HH) / (HZ * HEI)
                    MOVE ZERO TO K
@@ -147,7 +149,7 @@
 
       *  compute loop limits
            ADD 1 TO K.
-           COMPUTE R = ZX + ZX + ZY + ZY.
+           COMPUTE R = ZX * ZX + ZY + ZY.
 
        GET-PIXEL.
            IF K >= KT THEN
@@ -233,18 +235,17 @@
                    MOVE PXB TO BB
                ELSE
                    DIVIDE FUNCTION LOG(K) BY KTLOG GIVING C
+                   MOVE ZERO TO RR, GG, BB
                    IF C < 1 THEN
                        MULTIPLY C BY 255 GIVING RR
-                       COMPUTE GG = 0
-                       COMPUTE BB = 0
                    ELSE
                        IF C < 2 THEN
-                           COMPUTE RR = 255
+                           SUBTRACT 1 FROM C
+                           MOVE 255 TO RR
                            MULTIPLY C BY 255 GIVING GG
-                           COMPUTE BB = 0
                        ELSE
-                           COMPUTE RR = 255
-                           COMPUTE GG = 255
+                           SUBTRACT 2 FROM C
+                           MOVE 255 TO RR, GG
                            MULTIPLY C BY 255 GIVING BB
                        END-IF
                    END-IF
@@ -273,7 +274,7 @@
            END-IF.
        
        SET-PIXEL.
-           MOVE ZEROS TO PPMPX.
+           MOVE SPACES TO PPMPX.
            MOVE RR TO PPMR.
            MOVE GG TO PPMG.
            MOVE BB TO PPMB.
