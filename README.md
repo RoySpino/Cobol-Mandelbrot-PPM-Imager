@@ -4,7 +4,7 @@ A retro-style implementation of the **Mandelbrot Set** fractal generator written
 
 This program was origianlly run on a PC running a AMD Athlon II X2 250 and took **7.5 hours** to generate a 5k x 5k image.
 
-| | | | |
+| | Program | Processor | Time |
 | :--- | :--- | :--- | :--- | 
 2022-11-11|mSet|AMD Athlon II X2 250|**7.5 hours**|
 2026-09-24|mSet|AMD Athlon II X2 250|58 Min|
