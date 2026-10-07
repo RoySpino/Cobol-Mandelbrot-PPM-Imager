@@ -14,56 +14,56 @@
 
 
        WORKING-STORAGE SECTION.
-        01 CONT                 PIC 9(10) VALUE 0.
-        77 DATALIEN             PIC A(25).
         77 WID                  PIC 9(5).
         77 HEI                  PIC 9(5).
-        77 PIXL                 PIC 9(10).
-        77 COV5                 PIC z(5).
-        77 COV20                PIC X(20).
-        77 COV5A                PIC x(5).
         01 DIM.
-           05 PPMH              PIC z(5).
-           05 PPMW              PIC z(5).
-        01 karrOverall.
+           05 PPMH              PIC Z(5).
+           05 PPMW              PIC Z(5).
+        01 KARROVERALL.
            05 KARR              PIC S9(5)V9(10) OCCURS 500 TIMES.
+        01 PXA.
+           05 PIXEL_ARR         PIC 9(9) OCCURS 500 TIMES.
+        01 PIXEL.
+           05 PXR               PIC 999.
+           05 PXG               PIC 999.
+           05 PXB               PIC 999.
+        01 PPMPX.
+           05 PPMR              PIC 999.
+           05 S1                PIC X.
+           05 PPMG              PIC 999.
+           05 S2                PIC X.
+           05 PPMB              PIC 999.
 
-        77 cx                   PIC S9(5)V9(10).
-        77 cy                   PIC S9(5)V9(10).
-        77 mx                   PIC S9(5)V9(10).
-        77 my                   PIC S9(5)V9(10).
-        77 hw                   PIC S9(5)V9(10).
-        77 hh                   PIC S9(5)V9(10).
-        77 hz                   PIC S9(5)V9(10).
-        77 tx                   PIC S9(5)V9(10).
-        77 ty                   PIC S9(5)V9(10).
-        77 Zx                   PIC S9(5)V9(10).
-        77 Zy                   PIC S9(5)V9(10).
+        77 CX                   PIC S9(5)V9(10).
+        77 CY                   PIC S9(5)V9(10).
+        77 HW                   PIC S9(5)V9(10).
+        77 HH                   PIC S9(5)V9(10).
+        77 HZ                   PIC S9(5)V9(10).
+        77 ZX                   PIC S9(5)V9(10).
+        77 ZY                   PIC S9(5)V9(10).
         77 TEMP                 PIC S9(5)V9(10).
-        77 thrdA                PIC S9(5)V9(10).
-        77 thrdB                PIC S9(5)V9(10).
-        77 ktlog                PIC S9(5)V9(10).
-        77 klog                 PIC S9(5)V9(10).
-        77 prctL                PIC S9(5)V9(10).
-        77 prct                 PIC S9(5).
-        77 prctO                PIC Z(5).
+        77 THRDA                PIC S9(5)V9(10).
+        77 THRDB                PIC S9(5)V9(10).
+        77 KTLOG                PIC S9(5)V9(10).
+        77 KLOG                 PIC S9(5)V9(10).
+        77 PRCTL                PIC S9(5)V9(10).
+        77 PRCT                 PIC S9(5).
+        77 PRCTO                PIC Z(5).
         77 K                    PIC S9(5).
         77 KT                   PIC S9(5).
         77 X                    PIC S9(10).
         77 Y                    PIC S9(10).
         77 M                    PIC S9.
-        77 xmin                 PIC S9v9(10).
-        77 xmax                 PIC S9v9(10).
-        77 ymin                 PIC S9v9(10).
-        77 ymax                 PIC S9v9(10).
-        77 zoom                 PIC S99V9(10).
+        77 XMIN                 PIC S9V9(10).
+        77 XMAX                 PIC S9V9(10).
+        77 YMIN                 PIC S9V9(10).
+        77 YMAX                 PIC S9V9(10).
+        77 ZOOM                 PIC S99V9(10).
         77 C                    PIC S99V9(10).
-        77 rr                   PIC S9999.
+        77 RR                   PIC S9999.
         77 R                    PIC S999.
-        77 gg                   PIC S9999.
-        77 G                    PIC S999.
-        77 bb                   PIC S9999.
-        77 B                    PIC S999.
+        77 GG                   PIC S9999.
+        77 BB                   PIC S9999.
 
        PROCEDURE DIVISION.
       * -1.76961, 0.00358696
@@ -72,7 +72,13 @@
        PROGRAM-CONTROL.
            MOVE 5000 TO HEI.
            MOVE HEI TO WID.
-           MULTIPLY HEI BY WID GIVING PIXL.
+           SUBTRACT 1 FROM KT GIVING KTLOG.
+           MOVE FUNCTION LOG(KTLOG) TO KTLOG.
+           
+      * clear out the pixel array
+           PERFORM VARYING X FROM 1 BY 1 UNTIL X = 500
+               MOVE 999888777 TO PIXEL_ARR(X)
+           END-PERFORM.
 
            MOVE 320 TO KT.
            MOVE 4 TO M.
@@ -128,7 +134,6 @@
       *          check fractal point
                    PERFORM CHECK-LOOP UNTIL K >= KT OR R >= M
 
-                   PERFORM GET-C-VALUE
                    PERFORM GET-RED
 
                    PERFORM SET-PIXEL
@@ -144,38 +149,74 @@
            ADD 1 TO K.
            COMPUTE R = ZX + ZX + ZY + ZY.
 
-       GET-C-VALUE.
-           IF KARR(K) > 0 THEN
-               MOVE KARR(K) TO C
+       GET-PIXEL.
+           IF K >= KT THEN
+               MOVE ZERO TO RR, GG, BB
            ELSE
-               MOVE FUNCTION LOG(K) TO KLOG
-               SUBTRACT 1 FROM KT GIVING KTLOG
-               MOVE FUNCTION LOG(KTLOG) TO KTLOG
+      *   check if color has been computed already
+               IF PIXEL_ARR(K) < 999888777 THEN
+                   MOVE PIXEL_ARR(K) TO PIXEL
+                   MOVE PXR TO RR
+                   MOVE PXG TO GG
+                   MOVE PXB TO BB
+               ELSE
+      *      compute log color value
+                   COMPUTE C = FUNCTION LOG(K) / KTLOG
 
-               DIVIDE KLOG BY KTLOG GIVING C
-               MOVE C TO KARR(K)
+      *  set pixel color
+                   IF C < 1 THEN
+                       COMPUTE RR = k * 8 * c
+                       COMPUTE GG = k * 8 * c
+                       COMPUTE BB = (128 + k * 4) * c
+                   ELSE
+                       IF C < 2 THEN
+                           SUBTRACT 1 FROM C
+                           COMPUTE RR = (128 + k - 16) * c
+                           COMPUTE GG = (128 + k - 16) * c
+                           COMPUTE BB = (192 + k - 16) * c
+                       ELSE
+                           SUBTRACT 2 FROM C
+                           COMPUTE RR = (kt - k) * c
+                           COMPUTE GG = (128+(kt - k) / 2) * c
+                           COMPUTE BB = kt - k
+                       END-IF
+                   END-IF
+
+      *  Save pixel color to pixel color array
+                    PERFORM NORMALIZE
+                    MOVE RR TO PXR
+                    MOVE GG TO PXG
+                    MOVE BB TO PXB
+                    MOVE PIXEL TO PIXEL_ARR(K)
+                END-IF
            END-IF.
-
+           
        GET-BLUE.
       *  set pixel color
            IF K >= KT THEN
-               MOVE ZERO TO RR
-               MOVE ZERO TO GG
-               MOVE ZERO TO BB
+               MOVE ZERO TO RR, GG, BB
            ELSE
-               IF K < THRDA THEN
-                   COMPUTE RR = K * 8
-                   COMPUTE GG = K * 8
-                   COMPUTE BB = 128 + K * 4
+               IF PIXEL_ARR(K) < 999888777 THEN
+                   MOVE PIXEL_ARR(K) TO PIXEL
+                   MOVE PXR TO RR
+                   MOVE PXG TO GG
+                   MOVE PXB TO BB
                ELSE
-                   IF K >= THRDA AND K < THRDB THEN
-                       COMPUTE RR = 128 + K - thrda
-                       COMPUTE GG = 128 + K - thrda
-                       COMPUTE BB = 192 + K - thrda
+                   DIVIDE FUNCTION LOG(K) BY KTLOG GIVING C
+                   IF K < THRDA THEN
+                       COMPUTE RR = K * 8
+                       COMPUTE GG = K * 8
+                       COMPUTE BB = 128 + K * 4
                    ELSE
-                       COMPUTE RR = KT - K
-                       COMPUTE GG = 128 + (KT - K) * 0.5
-                       COMPUTE BB = kt - k
+                       IF K >= THRDA AND K < THRDB THEN
+                           COMPUTE RR = 128 + K - thrda
+                           COMPUTE GG = 128 + K - thrda
+                           COMPUTE BB = 192 + K - thrda
+                       ELSE
+                           COMPUTE RR = KT - K
+                           COMPUTE GG = 128 + (KT - K) * 0.5
+                           COMPUTE BB = kt - k
+                       END-IF
                    END-IF
                END-IF
            END-IF.
@@ -183,75 +224,63 @@
        GET-RED.
       *  set pixel color
            IF K >= KT THEN
-               MOVE ZERO TO RR
-               MOVE ZERO TO GG
-               MOVE ZERO TO BB
+               MOVE ZERO TO RR, GG, BB
            ELSE
-
-               IF C < 1 THEN
-                   MULTIPLY C BY 255 GIVING RR
-                   COMPUTE GG = 0
-                   COMPUTE BB = 0
+               IF PIXEL_ARR(K) < 999888777 THEN
+                   MOVE PIXEL_ARR(K) TO PIXEL
+                   MOVE PXR TO RR
+                   MOVE PXG TO GG
+                   MOVE PXB TO BB
                ELSE
-                   IF C < 2 THEN
-                       COMPUTE RR = 255
-                       MULTIPLY C BY 255 GIVING GG
+                   DIVIDE FUNCTION LOG(K) BY KTLOG GIVING C
+                   IF C < 1 THEN
+                       MULTIPLY C BY 255 GIVING RR
+                       COMPUTE GG = 0
                        COMPUTE BB = 0
                    ELSE
-                       COMPUTE RR = 255
-                       COMPUTE GG = 255
-                       MULTIPLY C BY 255 GIVING BB
+                       IF C < 2 THEN
+                           COMPUTE RR = 255
+                           MULTIPLY C BY 255 GIVING GG
+                           COMPUTE BB = 0
+                       ELSE
+                           COMPUTE RR = 255
+                           COMPUTE GG = 255
+                           MULTIPLY C BY 255 GIVING BB
+                       END-IF
                    END-IF
                END-IF
+
+      * Save pixel color to pixel color array
+               PERFORM NORMALIZE
+               MOVE RR TO PXR
+               MOVE GG TO PXG
+               MOVE BB TO PXB
+               MOVE PIXEL TO PIXEL_ARR(K)
            END-IF.
            
        NORMALIZE.
       *    correct pixel value to 0-255 range
-           If RR < 0 THEN
-               MOVE ZERO TO RR
-           END-IF.
-           IF RR > 255 THEN
-               MOVE 255 TO RR
+           If RR < 0 THEN MOVE ZERO TO RR
+           ELSE IF RR > 255 THEN MOVE 255 TO RR
            END-IF.
 
-           If GG < 0 THEN
-               MOVE ZERO TO GG
-           END-IF.
-           IF GG > 255 THEN
-               MOVE 255 TO GG
+           If GG < 0 THEN MOVE ZERO TO GG
+           ELSE IF GG > 255 THEN MOVE 255 TO GG
            END-IF.
 
-           If BB < 0 THEN
-               MOVE ZERO TO BB
-           END-IF.
-           IF BB > 255 THEN
-               MOVE 255 TO BB
+           If BB < 0 THEN MOVE ZERO TO BB
+           ELSE IF BB > 255 THEN MOVE 255 TO BB
            END-IF.
        
        SET-PIXEL.
-           PERFORM NORMALIZE.
-
-      *   prep the pixel value to write to ppm
-           MOVE RR TO R.
-           MOVE GG TO G.
-           MOVE BB TO B.
+           MOVE ZEROS TO PPMPX.
+           MOVE RR TO PPMR.
+           MOVE GG TO PPMG.
+           MOVE BB TO PPMB.
 
       *   write pixel to ppm image file
-           MOVE R TO COV5A.
-           MOVE COV5A TO DATALIEN.
-           MOVE DATALIEN TO PPM_RECORD.
+           MOVE PPMPX TO PPM_RECORD.
            WRITE PPM_RECORD.
-
-           MOVE G TO COV5A.
-           MOVE COV5A TO DATALIEN.
-           MOVE DATALIEN TO PPM_RECORD.
-           WRITE PPM_RECORD.
-           
-           MOVE B TO COV5A.
-           MOVE COV5A TO DATALIEN.
-           MOVE DATALIEN TO PPM_RECORD.
-           WRITE PPM_RECORD.
-
 
        OPEN-FILE.
            OPEN OUTPUT PPMOUT.
@@ -261,22 +290,16 @@
            CLOSE PPMOUT.
            
        SET-HEADER.
-           MOVE "P3" TO DATALIEN.
-           PERFORM WRITE_IMAGE.
+      * write ppm type
+           MOVE "P3" TO PPM_RECORD.
+           WRITE PPM_RECORD.
 
-           MOVE HEI TO COV5A.
-           MOVE COV5A TO PPMH.
+      * write PPM image dimensions
+           MOVE HEI TO PPMH.
+           MOVE WID TO PPMW.
+           MOVE DIM TO PPM_RECORD.
+           WRITE PPM_RECORD.
 
-           MOVE WID TO COV5A.
-           MOVE COV5A TO PPMW.
-
-           MOVE DIM TO COV20.
-           MOVE COV20 TO DATALIEN.
-           PERFORM WRITE_IMAGE.
-           
-           MOVE "255" TO DATALIEN.
-           PERFORM WRITE_IMAGE.
-
-       WRITE_IMAGE.
-           MOVE DATALIEN TO PPM_RECORD.
+      * write maximum color value
+           MOVE "255" TO PPM_RECORD.
            WRITE PPM_RECORD.
