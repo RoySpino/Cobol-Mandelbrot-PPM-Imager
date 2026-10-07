@@ -34,6 +34,7 @@ To run this program, you will need a COBOL compiler. The recommended compiler is
   - Ubuntu/Debian: `sudo apt-get install gcc-cobc`
   - macOS (Homebrew): `brew install gcc-cobc`
   - Windows: [Download the GnuCOBOL installer]
+- **image viewer**: Any software that can open `.ppm` files (e.g., GIMP, IrfanView, or ImageMagick).
 
 ## Getting Started
 
