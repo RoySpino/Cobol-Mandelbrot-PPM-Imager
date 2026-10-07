@@ -2,7 +2,7 @@
 
 A retro-style implementation of the **Mandelbrot Set** fractal generator written in COBOL. This program calculates the complex mathematical set and outputs the result as a separate high-quality **PPM3 (Portable PixMap)** image file.
 
-This program was origianlly run on a PC running a AMD Athlon II X2 250 and took **7.5 hours** to generate a 5k x 5k image.
+This program was origianlly run on a PC running a AMD Athlon II X2 250 and took **7.5 hours** to generate a 5k x 5k image. Below is a table of the time it took to generate the same image on the same machine over time as optimizations were made to the code. As well as the time it took to generate the same image on a more modern hardware.
 
 | | Program | Processor | Time |
 | :--- | :--- | :--- | :--- | 
@@ -11,8 +11,6 @@ This program was origianlly run on a PC running a AMD Athlon II X2 250 and took 
 2026-10-07|mSet|AMD Athlon II X2 250|47 Min 8 sec|
 2026-10-07|mSet|Intel Core i7-11800H|19 Min 22 sec|
 
-
-on 2026-09-24 the current time to complete on the same machine is: **58 Minutes**
 
 ## Overview
 While COBOL is traditionally associated with business logic and banking, this project demonstrates the language's capability in performing complex mathematical iterations and generating visual data. 
