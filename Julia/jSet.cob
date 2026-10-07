@@ -136,7 +136,7 @@
       *          check fractal point
                    PERFORM CHECK-LOOP UNTIL K >= KT OR R >= M
 
-                   PERFORM GET-RED
+                   PERFORM GET-PIXEL
 
                    PERFORM SET-PIXEL
                END-PERFORM

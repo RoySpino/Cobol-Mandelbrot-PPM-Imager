@@ -10,7 +10,8 @@ This program was origianlly run on a PC running a AMD Athlon II X2 250 and took 
 2026-09-24|mSet|AMD Athlon II X2 250|58 Min|
 2026-10-07|mSet|AMD Athlon II X2 250|47 Min 8 sec|
 2026-10-07|mSet|Intel Core i7-11800H|19 Min 22 sec|
-2026-10-07|jSet|Intel Core i7-11800H|5 Min 24 sec|
+2026-10-07|jSet|AMD Athlon II X2 250|13 Min 24 sec|
+2026-10-07|jSet|Intel Core i7-11800H|5 Min 12 sec|
 
 
 ## Overview
