@@ -19,8 +19,6 @@
        77 VAL           PIC X.
 
 
-       01 KVARR.
-           05 KVAL      PIC S99V9(10) OCCURS 500 TIMES.
        01 logarr.
            05 larr      PIC s999v9(9) OCCURS 500 times.
        01 DIM.
@@ -64,19 +62,23 @@
        77 LAM           PIC S9(9)V9(9).
        77 TX            PIC S9(9)V9(9).
        77 TY            PIC S9(9)V9(9).
+       77 TZ            PIC S9(9)V9(9).
        77 CX            PIC S9(9)V9(9).
        77 CY            PIC S9(9)V9(9).
        77 ZOOM          PIC S9(9)V9(9).
        77 X             PIC S9(9)V9(9).
        77 XX            PIC S9(9)V9(9).
        77 Y             PIC S9(9)V9(9).
+       77 YY            PIC S9(9)V9(9).
        77 R             PIC S9(9)V9(9).
        77 SUMS          PIC S9(9)V9(9).
        77 DX            PIC S9(9)V9(9).
+       77 DY            PIC S9(9)V9(9).
        77 idxsum        PIC S9(9)V9(9).
        77 RR            PIC 999.
        77 GG            PIC 999.
        77 BB            PIC 999.
+       77 maxty         pic s999v9(9).
 
        PROCEDURE DIVISION.
            MOVE "ABA       " TO SQ.
@@ -88,8 +90,9 @@
            MOVE ZERO TO PRCT.
            MOVE ZERO TO X.
            MOVE 25 TO MAXITER.
-           MOVE 100 TO HEIGHT
+           MOVE 500 TO HEIGHT
            MOVE HEIGHT TO WIDTH.
+           move -999 to maxty. 
 
 
            SUBTRACT ZOOM FROM CX GIVING XMIN.
@@ -97,6 +100,9 @@
 
            SUBTRACT ZOOM FROM CY GIVING YMIN.
            ADD ZOOM TO CY GIVING YMAX.
+
+           COMPUTE DX = (XMAX - XMIN) / WIDTH.
+           COMPUTE DY = (YMAX - YMIN) / HEIGHT.
 
            PERFORM OPEN-FILE.
            PERFORM SET-HEADER.
@@ -124,16 +130,22 @@
        ILOOP.
            ADD 1 TO Y.
 
-           compute aaa = xmin + (xmax - xmin) * x / width.
+           MULTIPLY DX BY X GIVING TZ.
+           ADD TZ TO XMIN GIVING AAA.
+      *     compute aaa = xmin + (xmax - xmin) * x / width.
            
-           compute bbb = ymin + (ymax - ymin) * y / height.
+           MULTIPLY DY BY Y GIVING TZ.
+           ADD TZ TO YMIN GIVING BBB.
+      *     compute bbb = ymin + (ymax - ymin) * y / height.
 
            MOVE 0.5 TO XX.
            MOVE ZERO TO SUMS, IDXSUM.
            
            MOVE ZERO TO I, V.
            PERFORM LYAPEXP UNTIL I > MAXITER.
+
            DIVIDE SUMS BY MAXITER GIVING LAM.
+
 
       * Put the character into display array
            PERFORM SETCOLOR.
@@ -152,36 +164,26 @@
            ELSE
                MOVE BBB TO R
            END-IF.
-      *     display seq(v).
 
-      *     SUBTRACT xx FROM 1 GIVING TY.
-      *     MULTIPLY XX BY TY GIVING TY.
-      *     MULTIPLY R BY TY GIVING XX.
            compute xx = r * xx * (1 - xx). 
 
-      *     MULTIPLY 2 BY XX GIVING TY.
-      *     SUBTRACT TY FROM 1 GIVING TY.
-      *     MULTIPLY R BY TY GIVING DX.
-           compute dx = r * (1 - 2 * xx).
+           compute YY = r * (1 - 2 * xx).
 
-           IF DX < 0 THEN
-               MULTIPLY -1 BY DX
+           IF YY < 0 THEN
+               MULTIPLY -1 BY YY
            END-IF.
-           ADD DX TO IDXSUM.
+           ADD YY TO IDXSUM.
 
-           IF DX > 0.0000001 THEN
-                MOVE FUNCTION LOG(DX) TO DX
-                ADD DX TO SUMS
+           IF YY > 0.0000001 THEN
+                compute sums = sums + FUNCTION LOG(YY)
       *         move dx to larr(i)
            END-IF.
 
        SETCOLOR.
            MOVE LAM TO TX.
 
-           MOVE FUNCTION EXP(LAM) TO TY.
-      *     SUBTRACT TY FROM 1 GIVING TY.
-      *     MULTIPLY 255 BY TY GIVING INTEN.
-      *     MOVE FUNCTION ABS(inten) TO inten.
+      *     MOVE FUNCTION EXP(LAM) TO TY.
+           compute ty = 1.7 / lam.
            compute inten = 255 * (1 - ty).
 
            IF INTEN < 0 THEN
