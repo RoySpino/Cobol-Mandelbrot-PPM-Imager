@@ -129,12 +129,14 @@
            MOVE -1 TO ROOT.
            MOVE 1 TO DENOM.
 
-           PERFORM ITERLOOP UNTIL ITER >= MAXITR OR DENOM <= 0.000001.
+           PERFORM ITERLOOP UNTIL ITER >= MAXITR  
+                                 or root > 0
+                                 OR DENOM <= 0.000001.
 
            MOVE ZEROS TO PIXEL.
            MOVE ZERO TO RR, GG, BB.
 
-           IF ROOT < 4 THEN PERFORM SETCOLOR
+           IF ROOT > 0 AND ROOT < 4 THEN PERFORM SETCOLOR
            END-IF.
 
            PERFORM SET-PIXEL.
@@ -160,8 +162,6 @@
                MOVE ZERO TO K
 
                PERFORM FINDROOTS UNTIL K > 3 OR ROOT > 0
-           END-IF.
-           IF ROOT > 0 THEN ADD MAXITR TO ITER
            END-IF.
 
        FINDROOTS.
