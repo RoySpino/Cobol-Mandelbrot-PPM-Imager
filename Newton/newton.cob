@@ -45,57 +45,57 @@
        01 RYARR.
            05 RY        PIC S9V9(9) OCCURS 3 TIMES.
        77 MAXITR        PIC 999        VALUE 30.
-       77 TOL           PIC S99V9(9) VALUE 0.000001.
+       77 TOL           PIC S9V9(10)   VALUE 0.000000001.
        77 ITER          PIC 999        VALUE ZERO.
-       77 ROOT          PIC S9V9(9)    VALUE -1.
-       77 DENOM         PIC S9(9)V9(9).
-       77 SHADE         PIC S9(3)V9(9).
-       77 QR            PIC S9(5)V9(9).
-       77 QI            PIC S9(5)V9(9).
-       77 XMIN          PIC S9(9)V9(9).
-       77 XMAX          PIC S9(9)V9(9).
-       77 YMIN          PIC S9(9)V9(9).
-       77 YMAX          PIC S9(9)V9(9).
-       77 FR            PIC S9(9)V9(9).
-       77 FI            PIC S9(9)V9(9).
-       77 THIT          PIC S9(9)V9(9).
-       77 TWID          PIC S9(9)V9(9).
-       77 TX            PIC S9(9)V9(9).
-       77 TY            PIC S9(9)V9(9).
-       77 TZ            PIC S9(9)V9(9).
-       77 TW            PIC S9(9)V9(9).
-       77 CX            PIC S9(9)V9(9).
-       77 CY            PIC S9(9)V9(9).
-       77 ZOOM          PIC S9(9)V9(9).
+       77 ROOT          PIC S999       VALUE -1.
+       77 DENOM         PIC S9(5)V9(10).
+       77 SHADE         PIC S9(5)V9(10).
+       77 QR            PIC S9(5)V9(10).
+       77 QI            PIC S9(5)V9(10).
+       77 XMIN          PIC S9(5)V9(10).
+       77 XMAX          PIC S9(5)V9(10).
+       77 YMIN          PIC S9(5)V9(10).
+       77 YMAX          PIC S9(5)V9(10).
+       77 FR            PIC S9(5)V9(10).
+       77 FI            PIC S9(5)V9(10).
+       77 THIT          PIC S9(5)V9(10).
+       77 TWID          PIC S9(5)V9(10).
+       77 TX            PIC S9(5)V9(10).
+       77 TY            PIC S9(5)V9(10).
+       77 TZ            PIC S9(5)V9(10).
+       77 TW            PIC S9(5)V9(10).
+       77 CX            PIC S9(5)V9(10).
+       77 CY            PIC S9(5)V9(10).
+       77 ZOOM          PIC S9(5)V9(10).
        77 EXCAPE        PIC A          VALUE SPACE.
        77 K             PIC 999.
-       77 X             PIC S9(9)V9(9).
-       77 XX            PIC S9(9)V9(9).
-       77 Y             PIC S9(9)V9(9).
-       77 YY            PIC S9(9)V9(9).
-       77 R             PIC S9(9)V9(9).
-       77 DR            PIC S9(9)V9(9).
-       77 DI            PIC S9(9)V9(9).
-       77 DX            PIC S9(9)V9(9).
-       77 DY            PIC S9(9)V9(9).
+       77 X             PIC S9(5)V9(10).
+       77 XX            PIC S9(5)V9(10).
+       77 Y             PIC S9(5)V9(10).
+       77 YY            PIC S9(5)V9(10).
+       77 R             PIC S9(9)V9(10).
+       77 DR            PIC S9(5)V9(10).
+       77 DI            PIC S9(5)V9(10).
+       77 DX            PIC S9(5)V9(10).
+       77 DY            PIC S9(5)V9(10).
        77 RR            PIC 999.
        77 GG            PIC 999.
        77 BB            PIC 999.
 
        PROCEDURE DIVISION.
-           MOVE 500 TO HEIGHT.
+           MOVE 5000 TO HEIGHT.
            MOVE HEIGHT TO WIDTH.
-           MOVE  1.0       TO RX(1).
-           MOVE -0.5       TO RX(2).
-           MOVE -0.5       TO RX(3).
-           MULTIPLY TOL BY TOL.
-           MOVE ZERO       TO RY(1).
-           MOVE 0.8660254  TO RY(2).
-           MOVE -0.8660254 TO RY(3).
+           MOVE  1.0          TO RX(1).
+           MOVE -0.5          TO RX(2).
+           MOVE -0.5          TO RX(3).
+           MOVE ZERO          TO RY(1).
+           MOVE 0.8660254037  TO RY(2).
+           MOVE -0.8660254037 TO RY(3).
 
            MOVE ZERO TO Y.
-           MOVE 0 TO PRCT.
-           MOVE -1 TO LPRCT.
+           MOVE ZERO TO PRCT.
+           MOVE -1   TO LPRCT.
+
            COMPUTE TWID = 3.0 / WIDTH.
            COMPUTE THIT = 3.0 / HEIGHT.
 
@@ -116,15 +116,14 @@
                DISPLAY "%" DPRCT
            END-IF.
 
+
            PERFORM ILOOP UNTIL X >= WIDTH.
 
        ILOOP.
            ADD 1 TO X.
 
-           MULTIPLY Y BY THIT GIVING TX.
-           COMPUTE DY = TX - 1.5.
-           MULTIPLY X BY TWID GIVING TX.
-           COMPUTE DX = TX - 1.5.
+           COMPUTE DX = (X * TWID) - 1.5.
+           COMPUTE DY = (Y * THIT) - 1.5.
 
            MOVE ZERO TO ITER.
            MOVE -1 TO ROOT.
@@ -135,57 +134,52 @@
            MOVE ZEROS TO PIXEL.
            MOVE ZERO TO RR, GG, BB.
 
-      * determin the color and apply to image
-           IF ROOT > 0 THEN PERFORM SETCOLOR
-           END-IF
+           IF ROOT < 4 THEN PERFORM SETCOLOR
+           END-IF.
+
            PERFORM SET-PIXEL.
 
        ITERLOOP.
            ADD 1 TO ITER.
+
            COMPUTE FR = DX * DX * DX - 3 * DX * DY * DY - 1.
            COMPUTE FI = 3 * DX * DX * DY - DY * DY * DY.
 
-           COMPUTE DR = 3.0 * (DX * DX - DY*DY).
-           COMPUTE DI = 6.0 * DX * DY.
+           COMPUTE DR = 3 * (DX * DX - DY * DY).
+           COMPUTE DI = 6 * DX * DY.
 
            COMPUTE DENOM = DR * DR + DI * DI.
+
            IF DENOM > 0.000001 THEN
                COMPUTE QR = (FR * DR + FI * DI) / DENOM
                COMPUTE QI = (FI * DR - FR * DI) / DENOM
 
-               SUBTRACT QR FROM DX
-               SUBTRACT QI FROM DY
+               COMPUTE DX = DX - QR
+               COMPUTE DY = DY - QI
 
                MOVE ZERO TO K
-               MOVE SPACE TO EXCAPE
 
-
-               display " "
-               PERFORM FINDROOTS UNTIL K >= 3 OR EXCAPE = "X"
-               MOVE K TO ROOT
+               PERFORM FINDROOTS UNTIL K > 3 OR ROOT > 0
            END-IF.
-
-           IF K < 1 THEN MOVE MAXITR TO ITER
+           IF ROOT > 0 THEN ADD MAXITR TO ITER
            END-IF.
 
        FINDROOTS.
            ADD 1 TO K.
            COMPUTE TX = DX - RX(K).
            COMPUTE TY = DY - RY(K).
-           COMPUTE QR = TX * TX + TY * TY.
+           COMPUTE TZ = TX * TX + TY * TY.
 
-           move qr to dsp3.
-           move tx to dsp2.
-           move ty to dsp3.
-           display dsp3 " = " dsp2 " + " dsp3.
-
-           IF QR < TOL THEN MOVE "X" TO EXCAPE
+           IF TZ < TOL THEN MOVE K TO ROOT
            END-IF.
 
        SETCOLOR.
            DIVIDE ITER BY MAXITR GIVING SHADE.
            SUBTRACT SHADE FROM 1 GIVING SHADE.
+           MULTIPLY 0.7 BY SHADE.
+           ADD 0.3 TO SHADE.
 
+      * get the color
            IF ROOT = 1 THEN
                MOVE "255060060" TO PIXEL
            ELSE
