@@ -96,8 +96,8 @@
            MOVE ZERO TO PRCT.
            MOVE -1   TO LPRCT.
 
-           COMPUTE TWID = 3.0 / WIDTH.
-           COMPUTE THIT = 3.0 / HEIGHT.
+           DIVIDE 3 BY WIDTH GIVING TWID.
+           DIVIDE 3 BY HEIGHT GIVING THIT.
 
            PERFORM OPEN-FILE.
            PERFORM SET-HEADER.
@@ -122,15 +122,18 @@
        ILOOP.
            ADD 1 TO X.
 
-           COMPUTE DX = (X * TWID) - 1.5.
-           COMPUTE DY = (Y * THIT) - 1.5.
+           MULTIPLY X BY TWID GIVING TX.
+           SUBTRACT 1.5 FROM TX GIVING DX.
+
+           MULTIPLY Y BY THIT GIVING TX.
+           SUBTRACT 1.5 FROM TX GIVING DY.
 
            MOVE ZERO TO ITER.
            MOVE -1 TO ROOT.
            MOVE 1 TO DENOM.
 
            PERFORM ITERLOOP UNTIL ITER >= MAXITR  
-                                 or root > 0
+                                 OR root > 0
                                  OR DENOM <= 0.000001.
 
            MOVE ZEROS TO PIXEL.
@@ -150,14 +153,17 @@
            COMPUTE DR = 3 * (DX * DX - DY * DY).
            COMPUTE DI = 6 * DX * DY.
 
-           COMPUTE DENOM = DR * DR + DI * DI.
+           MULTIPLY DR BY DR GIVING TX.
+           MULTIPLY DI BY DI GIVING TY.
+           ADD TX TO TY GIVING DENOM.
+           DIVIDE 1 BY DENOM GIVING DENOM.
 
            IF DENOM > 0.000001 THEN
-               COMPUTE QR = (FR * DR + FI * DI) / DENOM
-               COMPUTE QI = (FI * DR - FR * DI) / DENOM
+               COMPUTE QR = (FR * DR + FI * DI) * DENOM
+               COMPUTE QI = (FI * DR - FR * DI) * DENOM
 
-               COMPUTE DX = DX - QR
-               COMPUTE DY = DY - QI
+               SUBTRACT QR FROM DX GIVING DX.
+               SUBTRACT QI FROM DY GIVING DY
 
                MOVE ZERO TO K
 
@@ -166,9 +172,12 @@
 
        FINDROOTS.
            ADD 1 TO K.
-           COMPUTE TX = DX - RX(K).
-           COMPUTE TY = DY - RY(K).
-           COMPUTE TZ = TX * TX + TY * TY.
+           SUBTRACT RX(K) FROM DX GIVING TX.
+           SUBTRACT RY(K) FROM DY GIVING TY.
+
+           MULTIPLY TX BY TX.
+           MULTIPLY TY BY TY.
+           ADD TX TO TY GIVING TZ.
 
            IF TZ < TOL THEN MOVE K TO ROOT
            END-IF.
