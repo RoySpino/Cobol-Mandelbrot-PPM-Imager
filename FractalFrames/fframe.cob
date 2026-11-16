@@ -110,6 +110,12 @@
            PERFORM SET-HEADER.
            
            PERFORM MAINLOOP UNTIL I > ITERATIONS.
+
+      * get base number for log coloration
+           ADD 1 TO MAXK GIVING TEMP.
+           MOVE FUNCTION LOG(TEMP) TO MAXK.
+
+      * draw fractal
            PERFORM DRAWX UNTIL XX > WID.
 
            PERFORM CLOSE-FILE.
@@ -149,8 +155,8 @@
                COMPUTE PX = (X + 1.2) / 4 * WID
                COMPUTE PY = (Y + 1.2) / 4 * HEI
                
-               IF PX > 0 AND PX < WID AND
-                  PY > 0 AND PY < HEI THEN
+               IF PX >= 0 AND PX < WID AND
+                  PY >= 0 AND PY < HEI THEN
                   COMPUTE HDX = PY * WID + PX
                   ADD 1 TO HIST(HDX)
 
@@ -159,8 +165,6 @@
                   END-IF
                END-IF
            END-IF.
-
-           MOVE FUNCTION LOG(MAXK) TO MAXK.
 
        DRAWX.
            ADD 1 TO XX.
