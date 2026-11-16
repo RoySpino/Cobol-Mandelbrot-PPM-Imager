@@ -101,6 +101,33 @@
 
        MAINLOOP.
            ADD 1 TO I.
+           
+           PERFORM GETRANDOM.
+
+           IF R < AW(1) THEN MOVE ZERO TO IDX
+           ELSE IF R < AW(2) THEN MOVE 1 TO IDX
+           ELSE MOVE 2 TO IDX
+           END-IF.
+
+           COMPUTE X1 = AA(IDX) * X + AB(IDX) * Y + AC(IDX).
+           COMPUTE Y1 = AD(IDX) * X + AE(IDX) * Y + AF(IDX).
+
+           IF VAR(IDX) = ZERO THEN
+               MOVE FUNCTION SIN(X1) TO X
+               MOVE FUNCTION COS(Y1) TO Y
+           ELSE
+               COMPUTE R2 = X1 * X1 + Y1 * Y1 + 0.000001.
+               DIVIDE X1 BY R2 GIVING X
+               DIVIDE Y1 BY R2 GIVING Y
+           END-IF.
+
+           IF I > 2O THEN
+               COMPUTE PX = (X + 1.2) / 4 * WID
+               COMPUTE PY = (Y + 1.2) / 4 * HEI
+               
+               IF 
+           END-IF.
+       GETRANDOM.
 
        NORMALIZE.
       *    correct pixel value to 0-255 range
