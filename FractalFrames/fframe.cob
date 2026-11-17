@@ -51,31 +51,32 @@
         01 ARRVAR.
            05 VAR               PIC 9 OCCURS 3 TIMES.
         01 AH.
-           05 HIST              PIC S9(5)V9(10) OCCURS 250000 TIMES.
+           05 HIST              PIC S9(5)V9(10) OCCURS 250000 TIMES
+                                    VALUE ZERO.
 
-        77 ITERATIONS           PIC 9(6)V9(10)  VALUE 250000.
-        77 X                    PIC S9(6)V9(10) VALUE ZERO.
-        77 Y                    PIC S9(6)V9(10) VALUE ZERO.
-        77 I                    PIC S9(7)V9(5)  VALUE ZERO.
-        77 R                    PIC S9(4)V9(10).
-        77 X1                   PIC S9(6)V9(10).
-        77 Y1                   PIC S9(6)V9(10).
+        77 ITERATIONS           PIC 9(6)V9      VALUE 250000.
+        77 X                    PIC S9(5)V9(10) VALUE ZERO.
+        77 Y                    PIC S9(5)V9(10) VALUE ZERO.
+        77 I                    PIC S9(7)       VALUE ZERO.
+        77 R                    PIC S9(2)V9(10).
+        77 X1                   PIC S9(5)V9(10).
+        77 Y1                   PIC S9(5)V9(10).
         77 R2                   PIC S9(5)V9(10).
         77 V                    PIC S9(5)V9(10).
         77 MAXK                 PIC S9(5)V9(10) VALUE -9999.
-        77 PX                   PIC S9(5)V9(10).
-        77 PY                   PIC S9(5)V9(10).
+        77 PX                   PIC 9(5).
+        77 PY                   PIC 9(5).
         77 HDX                  PIC 9(7).
         77 IDX                  PIC 9(7).
-        77 XX                   PIC 9(7).
-        77 YY                   PIC 9(7).
+        77 XX                   PIC 9(7)V9.
+        77 YY                   PIC 9(7)V9.
         77 PRCTL                PIC S9(5)V9(10).
         77 PRCT                 PIC S9(5).
         77 PRCTO                PIC Z(5).
-        
+
         77 TEMP                 PIC S9(5)V9(10).
-        77 TA                   PIC S9(5)V9(10).
-        77 TB                   PIC S9(5)V9(10).
+        77 TA                   PIC x(16).
+        77 TB                   PIC S9(9).
         77 KTLOG                PIC S9(5)V9(10).
         77 KLOG                 PIC S9(5)V9(10).
         77 K                    PIC S9(5).
@@ -95,7 +96,7 @@
            MOVE ZERO TO AB(1), AB(2), AB(3).
            MOVE ZERO TO AC(1).
            MOVE 0.5  TO AC(2).
-           MOVE -.05 TO AC(3).
+           MOVE -0.5 TO AC(3).
            MOVE ZERO TO AD(1), AD(2), AD(3).
            MOVE 0.5  TO AE(1), AE(2), AE(3).
            MOVE ZERO TO AF(1), AF(2).
@@ -104,19 +105,24 @@
            MOVE 1    TO VAR(2).
            MOVE 0.33 TO AW(1).
            MOVE 0.66 TO AW(2).
-           
+           MOVE 1.00 TO AW(3).
+
+           MOVE FUNCTION CURRENT-DATE TO TA.
+           MOVE FUNCTION NUMVAL(TA(8:9)) TO TB
+           MOVE FUNCTION RANDOM(TB) TO R.
+
       * clear out the pixel array
            PERFORM OPEN-FILE.
            PERFORM SET-HEADER.
-           
-           PERFORM MAINLOOP UNTIL I > ITERATIONS.
+
+           PERFORM MAINLOOP UNTIL I >= ITERATIONS.
 
       * get base number for log coloration
            ADD 1 TO MAXK GIVING TEMP.
            MOVE FUNCTION LOG(TEMP) TO MAXK.
 
       * draw fractal
-           PERFORM DRAWX UNTIL XX > WID.
+           PERFORM DRAWX UNTIL XX >= WID.
 
            PERFORM CLOSE-FILE.
 
@@ -131,7 +137,7 @@
                MOVE PRCT TO PRCTO
                DISPLAY "%" PRCTO
            END-IF.
-           
+
            MOVE FUNCTION RANDOM TO R.
 
            IF R < AW(1) THEN MOVE 1 TO IDX
@@ -154,13 +160,13 @@
            IF I > 20 THEN
                COMPUTE PX = (X + 1.2) / 4 * WID
                COMPUTE PY = (Y + 1.2) / 4 * HEI
-               
+
                IF PX >= 0 AND PX < WID AND
                   PY >= 0 AND PY < HEI THEN
-                  COMPUTE HDX = PY * WID + PX
+                  COMPUTE HDX = PY * WID + PX + 1
                   ADD 1 TO HIST(HDX)
 
-                  IF MAXK < HIST(HDX) THEN 
+                  IF MAXK < HIST(HDX) THEN
                       MOVE HIST(HDX) TO MAXK
                   END-IF
                END-IF
@@ -169,9 +175,8 @@
        DRAWX.
            ADD 1 TO XX.
            MOVE ZERO TO YY.
-           PERFORM DRAWY UNTIL YY > HEI.
+           PERFORM DRAWY UNTIL YY >= HEI.
        DRAWY.
-           ADD 1 TO YY.
            COMPUTE IDX = YY * WID + XX.
            MOVE HIST(IDX) TO V.
 
@@ -190,6 +195,7 @@
 
            PERFORM NORMALIZE.
            PERFORM SET-PIXEL.
+           ADD 1 TO YY.
 
 
 
@@ -206,7 +212,7 @@
            If BB < 0 THEN MOVE ZERO TO BB
            ELSE IF BB > 255 THEN MOVE 255 TO BB
            END-IF.
-       
+
        SET-PIXEL.
            MOVE SPACES TO PPMPX.
            MOVE RR TO PPMR.
@@ -223,7 +229,7 @@
        CLOSE-FILE.
       *     CLOSE OUTPUT PPMOUT.
            CLOSE PPMOUT.
-           
+
        SET-HEADER.
       * write ppm type
            MOVE "P3" TO PPM_RECORD.
